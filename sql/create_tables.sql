@@ -13,10 +13,10 @@ create table image
 );
 
 
-create table art_crop
+create table illustration
 (
-    id       uuid primary key,
-    art_crop text
+    id           uuid primary key,
+    illustration text
 );
 
 create table legality
@@ -83,7 +83,7 @@ create table card
     rarity          text,
     artist_id       uuid references artist (id),
     image_id        uuid references image (id),
-    art_crop_id     uuid references art_crop (id),
+    illustration_id uuid references illustration (id),
     legality_id     uuid references legality (id),
     rule_id         uuid references rule (id),
     set_id          uuid references set (id)
@@ -102,15 +102,15 @@ create table token
 create table related_token
 (
     id       uuid primary key,
-    card_id  uuid primary key references card (id),
-    token_id uuid primary key references token (id)
+    card_id  uuid references card (id),
+    token_id uuid references token (id)
 );
 
 create table related_card
 (
     id              uuid primary key,
-    card_id         uuid primary key references card (id),
-    related_card_id uuid primary key references card (id)
+    card_id         uuid references card (id),
+    related_card_id uuid references card (id)
 );
 
 create extension pg_trgm;
