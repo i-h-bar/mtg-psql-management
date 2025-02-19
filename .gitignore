@@ -12,6 +12,9 @@ wheels/
 # Pycharm
 .idea
 
+# Environment Data
+.env
+
 # Bulk data
 default-cards*.json
 oracle-cards*.json
