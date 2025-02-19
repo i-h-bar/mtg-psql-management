@@ -10,9 +10,9 @@ class Rule(BaseModel):
     toughness: str | None
     loyalty: str | None
     defence: str | None
-    type_line: str
+    type_line: str | None
     oracle_text: str | None
-    colours: list[str]
+    colours: list[str] | None
     keywords: list[str] | None
     produced_mana: list[str] | None
 

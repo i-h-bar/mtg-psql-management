@@ -1,16 +1,20 @@
 import uuid
 from datetime import datetime
 
+from models.base import CardInfo
+from models.illustrations import Illustration
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
 from models.cards import Card
 from models.images import Image
 from models.legalities import Legality
+from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
+from models.tokens import Token
 from utils.normalise import normalise
 
 
-def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
+def produce_card(card: dict) -> CardInfo:
     artist = Artist(
         id=card.get("artist_ids", MISSING_ID_ID)[0],
         name=card["artist"] or MISSING_ARTIST,
@@ -40,8 +44,12 @@ def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
 
     image = Image(
         id=str(uuid.uuid4()),
-        png=card["image_uris"]["png"],
-        art_crop=card["image_uris"]["art_crop"]
+        png=card["image_uris"]["png"]
+    )
+
+    illustration = Illustration(
+        id=card.get("illustration_id", MISSING_ARTIST),
+        illustration=card["image_uris"]["art_crop"]
     )
 
     set_ = Set(
@@ -51,7 +59,7 @@ def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
         abbreviation=card["set"],
     )
 
-    card = Card(
+    card_model = Card(
         id=card["id"],
         oracle_id=card["oracle_id"],
         name=card["name"],
@@ -63,9 +71,43 @@ def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
         rarity=card["rarity"],
         artist_id=artist.id,
         image_id=image.id,
+        illustration_id=illustration.id,
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,
     )
 
-    return card, artist, rule, legality, image, set_
+    collected_tokens = []
+    related_tokens = []
+    if parts := card.get("all_parts"):
+        if tokens := [part for part in parts if part["component"] == "token"]:
+            for token in tokens:
+                collected_tokens.append(
+                    Token(
+                        id=token["id"],
+                        name=token["name"],
+                        normalised_name=normalise(token["name"]),
+                        scryfall_uri=token["uri"]
+                    )
+                )
+
+                related_tokens.append(
+                    RelatedToken(
+                        id=str(uuid.uuid4()),
+                        token_id=token["id"],
+                        card_id=card_model.id
+                    )
+                )
+
+
+    return CardInfo(
+        card=card_model,
+        artist=artist,
+        rule=rule,
+        legality=legality,
+        image=image,
+        illustration=illustration,
+        set=set_,
+        token=collected_tokens,
+        related_token=related_tokens,
+    )

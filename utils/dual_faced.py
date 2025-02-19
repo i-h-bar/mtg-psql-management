@@ -2,18 +2,23 @@ import uuid
 from datetime import datetime
 
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
+from models.base import CardInfo
 from models.cards import Card
+from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
+from models.related_cards import RelatedCard
+from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
+from models.tokens import Token
 from utils.normalise import normalise
 
 
 
 def produce_side(
         card: dict, side: dict, side_id: str, reverse_side_id: str, legality: Legality, set_: Set
-) -> tuple[Card, Artist, Rule, Image]:
+) -> CardInfo:
     artist_id = (side.get("artist_ids") or card.get("artist_ids") or MISSING_ID_ID)[0]
     artist_name = side.get("artist") or card.get("artist") or MISSING_ARTIST
     artist = Artist(
@@ -31,20 +36,26 @@ def produce_side(
         toughness=side.get("toughness"),
         loyalty=side.get("loyalty"),
         defence=side.get("defense"),
-        type_line=side["type_line"],
+        type_line=side.get("type_line"),
         oracle_text=side.get("oracle_text"),
         colours=side.get("colors", []),
         keywords=side.get("keywords", []),
         produced_mana=side.get("produced_mana"),
     )
 
+    image_uris = side.get("image_uris") or card.get("image_uris")
+
     image = Image(
         id=str(uuid.uuid4()),
-        png=side["image_uris"]["png"],
-        art_crop=side["image_uris"]["art_crop"]
+        png=image_uris["png"]
     )
 
-    card = Card(
+    illustration = Illustration(
+        id=side.get("illustration_id") or card.get("illustration_id", MISSING_ARTIST),
+        illustration=image_uris["art_crop"]
+    )
+
+    card_model = Card(
         id=side_id,
         oracle_id=card["oracle_id"],
         name=side["name"],
@@ -56,19 +67,58 @@ def produce_side(
         rarity=card["rarity"],
         artist_id=artist.id,
         image_id=image.id,
+        illustration_id=illustration.id,
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,
-        reverse_side_id=reverse_side_id,
     )
 
-    return card, artist, rule, image
+    related_cards = [
+        RelatedCard(
+            id=str(uuid.uuid4()),
+            card_id=card_model.id,
+            related_card_id=reverse_side_id,
+        )
+    ]
+
+    collected_tokens = []
+    related_tokens = []
+    if parts := card.get("all_parts"):
+        if tokens := [part for part in parts if part["component"] == "token"]:
+            for token in tokens:
+                collected_tokens.append(
+                    Token(
+                        id=token["id"],
+                        name=token["name"],
+                        normalised_name=normalise(token["name"]),
+                        scryfall_uri=token["uri"]
+                    )
+                )
+
+                related_tokens.append(
+                    RelatedToken(
+                        id=str(uuid.uuid4()),
+                        token_id=token["id"],
+                        card_id=card_model.id
+                    )
+                )
 
 
-def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[
-    tuple[Card, Artist, Rule, Legality, Image, Set],
-    tuple[Card, Artist, Rule, Legality, Image, Set]
-]:
+    return CardInfo(
+        card=card_model,
+        artist=artist,
+        rule=rule,
+        image=image,
+        illustration=illustration,
+        legality=legality,
+        set=set_,
+        related_card=related_cards,
+        token=collected_tokens,
+        related_token=related_tokens
+    )
+
+
+def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo]:
     back_id = str(uuid.uuid4())
 
     legality = Legality(
@@ -83,10 +133,7 @@ def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[
         abbreviation=card["set"],
     )
 
-    front_card, front_artist, front_rule, front_image = produce_side(card, front, card["id"], back_id, legality, set_)
-    back_card, back_artist, back_rule, back_image = produce_side(card, back, back_id, front_card.id, legality, set_)
+    front = produce_side(card, front, card["id"], back_id, legality, set_)
+    back = produce_side(card, back, back_id, front.card.id, legality, set_)
 
-    return (
-        (front_card, front_artist, front_rule, legality, front_image, set_),
-        (back_card, back_artist, back_rule, legality, back_image, set_)
-    )
+    return front, back

@@ -14,7 +14,7 @@ class Card(BaseModel):
     rarity: str
     artist_id: str
     image_id: str
+    illustration_id: str
     legality_id: str
     rule_id: str
     set_id: str
-    reverse_side_id: str = None
