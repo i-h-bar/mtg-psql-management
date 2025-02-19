@@ -65,6 +65,7 @@ create table card (
     oracle_id uuid,
     name text,
     normalised_name text,
+    scryfall_url text,
     flavour_text text,
     release_date date,
     reserved bool,
