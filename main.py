@@ -4,20 +4,25 @@ import json
 import aiofiles
 import aiohttp
 
+from utils.dual_faced import produce_dual_faced_card
 from utils.single_faced import produce_card
 
 
 async def main():
-    async with aiofiles.open("oracle-cards-20250218220727.json", encoding="utf-8") as file:
+    async with aiofiles.open("oracle-cards-20250218100308.json", encoding="utf-8") as file:
         data = json.loads(await file.read())
 
 
     for card in data:
-        if not card.get("card_faces"):
+        if card.get("set_type") == "memorabilia":
+            continue
+
+        if not (sides := card.get("card_faces")):
             card_data = produce_card(card)
             x = 0
         else:
-            print(card["name"])
+            front, back = produce_dual_faced_card(card, sides[0], sides[1])
+            x = 0
 
 
 if __name__ == '__main__':

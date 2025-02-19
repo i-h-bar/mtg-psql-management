@@ -7,7 +7,8 @@ class Card(BaseModel):
     oracle_id: str
     name: str
     normalised_name: str
-    flavour_text: str
+    scryfall_url: str
+    flavour_text: str | None
     release_date: datetime
     reserved: bool
     rarity: str
@@ -16,4 +17,4 @@ class Card(BaseModel):
     legality_id: str
     rule_id: str
     set_id: str
-    backside_id: str = None
+    reverse_side_id: str = None

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from models.artists import Artist
+from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
 from models.cards import Card
 from models.images import Image
 from models.legalities import Legality
@@ -12,9 +12,9 @@ from utils.normalise import normalise
 
 def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
     artist = Artist(
-        id=card["artist_ids"][0],
-        name=card["artist"],
-        normalised_name=normalise(card["artist"]),
+        id=card.get("artist_ids", MISSING_ID_ID)[0],
+        name=card["artist"] or MISSING_ARTIST,
+        normalised_name=normalise(card["artist"] or MISSING_ARTIST),
     )
 
     rule = Rule(
@@ -28,8 +28,8 @@ def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
         defence=card.get("defense"),
         type_line=card["type_line"],
         oracle_text=card["oracle_text"],
-        colours=card["colors"],
-        keywords=card.get("keywords"),
+        colours=card.get("colors", []),
+        keywords=card.get("keywords", []),
         produced_mana=card.get("produced_mana"),
     )
 
@@ -56,7 +56,8 @@ def produce_card(card: dict) -> tuple[Card, Artist, Rule, Legality, Image, Set]:
         oracle_id=card["oracle_id"],
         name=card["name"],
         normalised_name=normalise(card["name"]),
-        flavour_text=card["flavor_text"],
+        scryfall_url=card["scryfall_uri"],
+        flavour_text=card.get("flavor_text"),
         release_date=datetime.strptime(card["released_at"], "%Y-%m-%d"),
         reserved=card["reserved"],
         rarity=card["rarity"],
