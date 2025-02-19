@@ -103,7 +103,6 @@ def produce_side(
                     )
                 )
 
-
     return CardInfo(
         card=card_model,
         artist=artist,
