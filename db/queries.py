@@ -34,3 +34,41 @@ INSERT INTO related_card (id, card_id, related_card_id) VALUES ($1, $2, $3) ON C
 """
 
 INSERT_RELATED_TOKEN = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
+
+CREATE_SET_MV = """
+        create materialized view set_{set} as
+            select front.id              as front_id,
+                   front.name            as front_name,
+                   front.normalised_name as front_normalised_name,
+                   front_image.png       as front_png,
+                   back.id               as back_id,
+                   back.name             as back_name,
+                   back_image.png        as back_png,
+                   front.release_date    as release_date
+            from card front
+                     left join related_card on related_card.card_id = front.id
+                     left join card back on related_card_id = back.id
+                     left join image front_image on front.image_id = front_image.id
+                     left join image back_image on back.image_id = back_image.id
+                     join set on front.set_id = set.id
+            where set.normalised_name = '{normalised_name}'
+        """
+
+CREATE_ARTIST_MV = """
+        create materialized view artist_{artist} as
+        select front.id              as front_id,
+               front.name            as front_name,
+               front.normalised_name as front_normalised_name,
+               front_image.png       as front_png,
+               back.id               as back_id,
+               back.name             as back_name,
+               back_image.png        as back_png,
+               front.release_date    as release_date
+        from card front
+                 left join related_card on related_card.card_id = front.id
+                 left join card back on related_card_id = back.id
+                 left join image front_image on front.image_id = front_image.id
+                 left join image back_image on back.image_id = back_image.id
+                 join artist on front.artist_id = artist.id
+        where artist.normalised_name = '{normalised_name}';
+"""

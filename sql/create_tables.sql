@@ -114,15 +114,7 @@ create table related_card
 );
 
 
-create index image_id_png_index
-    on image (id, png);
 
-create index related_card_card_id_related_card_id_index
-    on related_card (card_id, related_card_id);
-
-
-create index card_multi_index
-    on card (id, name, normalised_name, image_id, release_date);
 
 
 create extension pg_trgm;
