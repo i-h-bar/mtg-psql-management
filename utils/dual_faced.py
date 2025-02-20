@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
-from models.base import CardInfo
+from models.card_info import CardInfo
 from models.cards import Card
 from models.illustrations import Illustration
 from models.images import Image
@@ -111,9 +111,9 @@ def produce_side(
         illustration=illustration,
         legality=legality,
         set=set_,
-        related_card=related_cards,
-        token=collected_tokens,
-        related_token=related_tokens
+        related_cards=related_cards,
+        tokens=collected_tokens,
+        related_tokens=related_tokens
     )
 
 

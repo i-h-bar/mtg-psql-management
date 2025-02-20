@@ -1,4 +1,4 @@
-from models.base import CardInfo
+from models.card_info import CardInfo
 from utils.dual_faced import produce_dual_faced_card
 from utils.single_faced import produce_card
 

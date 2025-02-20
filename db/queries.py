@@ -14,7 +14,7 @@ $15, $16, $17, $18, $19, $20, $21, $22, $23) ON CONFLICT DO NOTHING
 """
 
 INSERT_RULE = """
-INSERT INTO rule (id, colour_identity, mana_cost, cmc, power, power, toughness, loyalty, defence, type_line, 
+INSERT INTO rule (id, colour_identity, mana_cost, cmc, power, toughness, loyalty, defence, type_line, 
 oracle_text, colours, keywords, produced_mana)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ON CONFLICT DO NOTHING
 """
@@ -27,7 +27,7 @@ image_id, illustration_id, legality_id, rule_id, set_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) ON CONFLICT DO NOTHING
 """
 
-INSERT_TOKEN = "INSERT INTO token (id, name, normalised_name) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING"
+INSERT_TOKEN = "INSERT INTO token (id, name, normalised_name, scryfall_uri) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING"
 
 INSERT_RELATED_CARD = """
 INSERT INTO related_card (id, card_id, related_card_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING

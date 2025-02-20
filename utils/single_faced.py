@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from models.base import CardInfo
+from models.card_info import CardInfo
 from models.illustrations import Illustration
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
 from models.cards import Card
@@ -108,6 +108,6 @@ def produce_card(card: dict) -> CardInfo:
         image=image,
         illustration=illustration,
         set=set_,
-        token=collected_tokens,
-        related_token=related_tokens,
+        tokens=collected_tokens,
+        related_tokens=related_tokens,
     )

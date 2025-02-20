@@ -22,5 +22,6 @@ class Legality(BaseModel):
     predh: str
     premodern: str
     standard: str
+    standardbrawl: str
     timeless: str
     vintage: str

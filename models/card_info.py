@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from models.artists import Artist
 from models.cards import Card
@@ -20,6 +20,6 @@ class CardInfo(BaseModel):
     illustration: Illustration
     rule: Rule
     set: Set
-    related_card: list[RelatedCard] = None
-    token: list[Token] = None
-    related_token: list[RelatedToken] = None
+    related_cards: list[RelatedCard] = Field(default_factory=list)
+    tokens: list[Token] = Field(default_factory=list)
+    related_tokens: list[RelatedToken] = Field(default_factory=list)

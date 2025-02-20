@@ -1,6 +1,4 @@
-from models.cards import Card
-from models.tokens import Token
 
-cached_cards: dict[str, Card] = {}
-token_cache: dict[str, Token] = {}
+token_cache: set[str] = set()
 artist_cache: set[str] = set()
+illustration_cache: set[str] = set()
