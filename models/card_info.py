@@ -9,7 +9,6 @@ from models.related_cards import RelatedCard
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
-from models.tokens import Token
 
 
 class CardInfo(BaseModel):
@@ -21,5 +20,4 @@ class CardInfo(BaseModel):
     rule: Rule
     set: Set
     related_cards: list[RelatedCard] = Field(default_factory=list)
-    tokens: list[Token] = Field(default_factory=list)
     related_tokens: list[RelatedToken] = Field(default_factory=list)

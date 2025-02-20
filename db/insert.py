@@ -41,11 +41,6 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
     set_ = card_info.set
     await pool.execute(INSERT_SET, set_.id, set_.name, set_.normalised_name, set_.abbreviation)
 
-    for token in card_info.tokens:
-        if token.id not in token_cache:
-            await pool.execute(INSERT_TOKEN, token.id, token.name, token.normalised_name, token.scryfall_uri)
-            token_cache.add(token.id)
-
     card = card_info.card
     await pool.execute(
         INSERT_CARD, card.id, card.oracle_id, card.name, card.normalised_name, card.scryfall_url,

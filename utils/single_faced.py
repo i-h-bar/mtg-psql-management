@@ -1,16 +1,15 @@
 import uuid
 from datetime import datetime
 
-from models.card_info import CardInfo
-from models.illustrations import Illustration
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
+from models.card_info import CardInfo
 from models.cards import Card
+from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
-from models.tokens import Token
 from utils.normalise import normalise
 
 
@@ -77,20 +76,10 @@ def produce_card(card: dict) -> CardInfo:
         set_id=set_.id,
     )
 
-    collected_tokens = []
     related_tokens = []
     if parts := card.get("all_parts"):
         if tokens := [part for part in parts if part["component"] == "token"]:
             for token in tokens:
-                collected_tokens.append(
-                    Token(
-                        id=token["id"],
-                        name=token["name"],
-                        normalised_name=normalise(token["name"]),
-                        scryfall_uri=token["uri"]
-                    )
-                )
-
                 related_tokens.append(
                     RelatedToken(
                         id=str(uuid.uuid4()),
@@ -98,7 +87,6 @@ def produce_card(card: dict) -> CardInfo:
                         card_id=card_model.id
                     )
                 )
-
 
     return CardInfo(
         card=card_model,

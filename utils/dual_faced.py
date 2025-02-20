@@ -81,20 +81,10 @@ def produce_side(
         )
     ]
 
-    collected_tokens = []
     related_tokens = []
     if parts := card.get("all_parts"):
         if tokens := [part for part in parts if part["component"] == "token"]:
             for token in tokens:
-                collected_tokens.append(
-                    Token(
-                        id=token["id"],
-                        name=token["name"],
-                        normalised_name=normalise(token["name"]),
-                        scryfall_uri=token["uri"]
-                    )
-                )
-
                 related_tokens.append(
                     RelatedToken(
                         id=str(uuid.uuid4()),

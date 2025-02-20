@@ -25,12 +25,12 @@ async def main():
 
         if data:
             await delete_indexes(pool)
+            await drop_all_mv(pool)
+
             with tqdm(total=len(data)) as pbar:
                 pbar.set_description("Inserting Cards")
                 pbar.refresh()
                 await asyncio.gather(*(insert_card(card, pbar, pool) for card in data))
-
-            await drop_all_mv(pool)
 
             all_sets = await pool.fetchval("select array_agg(normalised_name) from set;")
             with tqdm(total=len(all_sets)) as pbar:
@@ -45,9 +45,6 @@ async def main():
                 await asyncio.gather(*(create_mv_for_artist(artist, pool, pbar) for artist in all_artists))
 
             await add_indexes(pool)
-
-
-
 
 
 if __name__ == '__main__':
