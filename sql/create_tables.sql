@@ -90,20 +90,11 @@ create table card
 );
 
 
-create table token
-(
-    id              uuid primary key,
-    name            text,
-    normalised_name text,
-    scryfall_uri    text
-);
-
-
 create table related_token
 (
     id       uuid primary key,
     card_id  uuid references card (id),
-    token_id uuid references token (id)
+    token_id uuid references card (id)
 );
 
 create table related_card
@@ -112,9 +103,3 @@ create table related_card
     card_id         uuid references card (id),
     related_card_id uuid references card (id)
 );
-
-
-
-
-
-create extension pg_trgm;

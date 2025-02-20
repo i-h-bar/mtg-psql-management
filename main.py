@@ -10,6 +10,7 @@ import asyncpg
 
 from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
+from db.insert_tokens import insert_token_relations
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv
 
 load_dotenv()
@@ -20,7 +21,22 @@ async def main():
         data = json.loads(await file.read())
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
-        card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;"))
+        try:
+            card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;") or [])
+        except asyncpg.exceptions.UndefinedTableError:
+            async with aiofiles.open("sql/create_tables.sql", encoding="utf-8") as file:
+                try:
+                    await pool.execute(await file.read())
+                except (asyncpg.exceptions.DuplicateObjectError, asyncpg.exceptions.DuplicateTableError):
+                    pass
+
+            try:
+                await pool.execute("create extension pg_trgm;")
+            except (asyncpg.exceptions.DuplicateObjectError, asyncpg.exceptions.DuplicateTableError):
+                pass
+
+            card_ids = set()
+
         data = tuple(card for card in data if card["id"] not in card_ids and card.get("set_type") != "memorabilia")
 
         if data:
@@ -31,6 +47,8 @@ async def main():
                 pbar.set_description("Inserting Cards")
                 pbar.refresh()
                 await asyncio.gather(*(insert_card(card, pbar, pool) for card in data))
+
+            await insert_token_relations(pool)
 
             all_sets = await pool.fetchval("select array_agg(normalised_name) from set;")
             with tqdm(total=len(all_sets)) as pbar:

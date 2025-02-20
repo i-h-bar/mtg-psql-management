@@ -11,7 +11,6 @@ from models.related_cards import RelatedCard
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
-from models.tokens import Token
 from utils.normalise import normalise
 
 
@@ -102,7 +101,6 @@ def produce_side(
         legality=legality,
         set=set_,
         related_cards=related_cards,
-        tokens=collected_tokens,
         related_tokens=related_tokens
     )
 

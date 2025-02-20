@@ -96,6 +96,5 @@ def produce_card(card: dict) -> CardInfo:
         image=image,
         illustration=illustration,
         set=set_,
-        tokens=collected_tokens,
         related_tokens=related_tokens,
     )
