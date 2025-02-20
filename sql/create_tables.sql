@@ -51,7 +51,7 @@ create table rule
     id              uuid primary key,
     colour_identity char(1)[],
     mana_cost       text,
-    cmc             smallint,
+    cmc             integer,
     power           text,
     toughness       text,
     loyalty         text,

@@ -31,7 +31,7 @@ def produce_side(
         id=str(uuid.uuid4()),
         colour_identity=card["color_identity"],
         mana_cost=side.get("mana_cost"),
-        cmc=card["cmc"],
+        cmc=card.get("cmc", 0.0),
         power=side.get("power"),
         toughness=side.get("toughness"),
         loyalty=side.get("loyalty"),
@@ -51,13 +51,13 @@ def produce_side(
     )
 
     illustration = Illustration(
-        id=side.get("illustration_id") or card.get("illustration_id", MISSING_ARTIST),
+        id=side.get("illustration_id") or card.get("illustration_id", str(uuid.uuid4())),
         illustration=image_uris["art_crop"]
     )
 
     card_model = Card(
         id=side_id,
-        oracle_id=card["oracle_id"],
+        oracle_id=card.get("oracle_id", str(uuid.uuid4())),
         name=side["name"],
         normalised_name=normalise(side["name"]),
         scryfall_url=card["scryfall_uri"],

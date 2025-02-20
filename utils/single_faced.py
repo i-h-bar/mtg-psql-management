@@ -25,7 +25,7 @@ def produce_card(card: dict) -> CardInfo:
         id=str(uuid.uuid4()),
         colour_identity=card["color_identity"],
         mana_cost=card["mana_cost"],
-        cmc=card["cmc"],
+        cmc=card.get("cmc", 0.0),
         power=card.get("power"),
         toughness=card.get("toughness"),
         loyalty=card.get("loyalty"),
@@ -48,7 +48,7 @@ def produce_card(card: dict) -> CardInfo:
     )
 
     illustration = Illustration(
-        id=card.get("illustration_id", MISSING_ARTIST),
+        id=card.get("illustration_id", str(uuid.uuid4())),
         illustration=card["image_uris"]["art_crop"]
     )
 
@@ -61,7 +61,7 @@ def produce_card(card: dict) -> CardInfo:
 
     card_model = Card(
         id=card["id"],
-        oracle_id=card["oracle_id"],
+        oracle_id=card.get("oracle_id", str(uuid.uuid4())),
         name=card["name"],
         normalised_name=normalise(card["name"]),
         scryfall_url=card["scryfall_uri"],

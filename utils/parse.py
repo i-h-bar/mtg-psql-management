@@ -4,9 +4,6 @@ from utils.single_faced import produce_card
 
 
 def parse_card(card) -> tuple[CardInfo, ...]:
-    if card.get("set_type") == "memorabilia":
-        return tuple()
-
     if not (sides := card.get("card_faces")):
         return (produce_card(card),)
     else:
