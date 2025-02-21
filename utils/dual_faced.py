@@ -4,6 +4,7 @@ from datetime import datetime
 from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
 from models.card_info import CardInfo
 from models.cards import Card
+from models.combos import Combo
 from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
@@ -72,15 +73,22 @@ def produce_side(
         backside_id=reverse_side_id
     )
 
+    combos = []
     related_tokens = []
     if parts := card.get("all_parts"):
-        if tokens := [part for part in parts if part["component"] == "token"]:
-            for token in tokens:
+        for part in parts:
+            if part["component"] == "token":
                 related_tokens.append(
                     RelatedToken(
-                        id=str(uuid.uuid4()),
-                        token_id=token["id"],
+                        token_id=part["id"],
                         card_id=card_model.id
+                    )
+                )
+            elif part["component"] == "combo_piece":
+                combos.append(
+                    Combo(
+                        card_id=card_model.id,
+                        combo_card_id=part["id"]
                     )
                 )
 
@@ -92,7 +100,8 @@ def produce_side(
         illustration=illustration,
         legality=legality,
         set=set_,
-        related_tokens=related_tokens
+        related_tokens=related_tokens,
+        combos=combos
     )
 
 

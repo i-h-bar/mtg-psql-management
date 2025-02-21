@@ -27,19 +27,22 @@ image_id, illustration_id, legality_id, rule_id, set_id, backside_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) ON CONFLICT DO NOTHING
 """
 
-
 INSERT_RELATED_TOKEN = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
+
+INSERT_COMBO = "INSERT INTO combo (id, card_id, combo_card_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
 
 CREATE_SET_MV = """
         create materialized view set_{set} as
-            select front.id              as front_id,
-                   front.name            as front_name,
-                   front.normalised_name as front_normalised_name,
-                   front_image.png       as front_png,
-                   back.id               as back_id,
-                   back.name             as back_name,
-                   back_image.png        as back_png,
-                   front.release_date    as release_date
+            select front.id                     as front_id,
+                   front.name                   as front_name,
+                   front.normalised_name        as front_normalised_name,
+                   front_image.png              as front_png,
+                   front_image.scryfall_url     as front_scryfall_url,
+                   back.id                      as back_id,
+                   back.name                    as back_name,
+                   back_image.png               as back_png,
+                   back_image.scryfall_url      as back_scryfall_url,
+                   front.release_date           as release_date
             from card front
                      left join card back on front.backside_id = back.id
                      left join image front_image on front.image_id = front_image.id
@@ -50,14 +53,16 @@ CREATE_SET_MV = """
 
 CREATE_ARTIST_MV = """
         create materialized view artist_{artist} as
-            select front.id              as front_id,
-                   front.name            as front_name,
-                   front.normalised_name as front_normalised_name,
-                   front_image.png       as front_png,
-                   back.id               as back_id,
-                   back.name             as back_name,
-                   back_image.png        as back_png,
-                   front.release_date    as release_date
+            select front.id                     as front_id,
+                   front.name                   as front_name,
+                   front.normalised_name        as front_normalised_name,
+                   front_image.png              as front_png,
+                   front_image.scryfall_url     as front_scryfall_url,
+                   back.id                      as back_id,
+                   back.name                    as back_name,
+                   back_image.png               as back_png,
+                   back_image.scryfall_url      as back_scryfall_url,
+                   front.release_date           as release_date
             from card front
                      left join card back on front.backside_id = back.id
                      left join image front_image on front.image_id = front_image.id

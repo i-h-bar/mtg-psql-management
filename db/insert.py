@@ -5,7 +5,7 @@ from db.queries import (
     INSERT_ARTIST, INSERT_ILLUSTRATION, INSERT_IMAGE, INSERT_LEGALITY, INSERT_RULE, INSERT_SET, INSERT_CARD
 )
 from models.card_info import CardInfo
-from models.tokens import token_relations
+from models.post_inserts import token_relations, combo_relations
 from utils.card_cache import artist_cache, illustration_cache
 from utils.parse import parse_card
 
@@ -52,6 +52,9 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
 
     for related_token in card_info.related_tokens:
         token_relations.append(related_token)
+
+    for combo in card_info.combos:
+        combo_relations.append(combo)
 
 
 async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:

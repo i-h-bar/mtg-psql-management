@@ -3,15 +3,14 @@ import json
 import os
 
 import aiofiles
+import asyncpg
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-import asyncpg
-
 from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
-from db.insert_tokens import insert_token_relations
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv, create_mv_distinct
+from db.posty_bulk_inserts import insert_token_relations, insert_combos
 
 load_dotenv()
 
@@ -49,6 +48,7 @@ async def main():
                 await asyncio.gather(*(insert_card(card, pbar, pool) for card in data))
 
             await insert_token_relations(pool)
+            await insert_combos(pool)
 
             await create_mv_distinct(pool)
 

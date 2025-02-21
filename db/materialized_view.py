@@ -10,14 +10,16 @@ async def create_mv_distinct(pool: Pool):
     await pool.execute(
         """
         create materialized view distinct_cards as
-            select distinct on (front.name) front.id              as front_id,
-                                            front.name            as front_name,
-                                            front.normalised_name as front_normalised_name,
-                                            front_image.png       as front_png,
-                                            back.id               as back_id,
-                                            back.name             as back_name,
-                                            back_image.png        as back_png,
-                                            front.release_date    as release_date
+            select distinct on (front.name) front.id                    as front_id,
+                                            front.name                  as front_name,
+                                            front.normalised_name       as front_normalised_name,
+                                            front_image.png             as front_png,
+                                            front_image.scryfall_url    as front_scryfall_url,
+                                            back.id                     as back_id,
+                                            back.name                   as back_name,
+                                            back_image.scryfall_url     as back_scryfall_url,
+                                            back_image.png              as back_png,
+                                            front.release_date          as release_date
             from card front
                      left join card back on front.backside_id = back.id
                      left join image front_image on front.image_id = front_image.id

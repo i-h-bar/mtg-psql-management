@@ -97,4 +97,12 @@ create table related_token
     id       uuid primary key,
     card_id  uuid references card (id),
     token_id uuid references card (id)
-)
+);
+
+
+create table combo
+(
+    id       uuid primary key,
+    card_id  uuid references card (id),
+    combo_card_id uuid references card (id)
+);
