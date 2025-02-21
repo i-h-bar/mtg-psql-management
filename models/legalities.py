@@ -25,3 +25,4 @@ class Legality(BaseModel):
     standardbrawl: str
     timeless: str
     vintage: str
+    game_changer: bool

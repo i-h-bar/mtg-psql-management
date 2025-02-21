@@ -44,7 +44,8 @@ create table legality
     standard        text,
     standardbrawl   text,
     timeless        text,
-    vintage         text
+    vintage         text,
+    game_changer    bool
 );
 
 create table rule

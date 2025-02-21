@@ -14,6 +14,10 @@ from models.sets import Set
 from utils.normalise import normalise
 
 
+rule_cache: dict[str, Rule] = {}
+legality_cache: dict[str, Legality] = {}
+
+
 def produce_card(card: dict) -> CardInfo:
     artist = Artist(
         id=card.get("artist_ids", MISSING_ID_ID)[0],
@@ -21,26 +25,31 @@ def produce_card(card: dict) -> CardInfo:
         normalised_name=normalise(card["artist"] or MISSING_ARTIST),
     )
 
-    rule = Rule(
-        id=str(uuid.uuid4()),
-        colour_identity=card["color_identity"],
-        mana_cost=card["mana_cost"],
-        cmc=card.get("cmc", 0.0),
-        power=card.get("power"),
-        toughness=card.get("toughness"),
-        loyalty=card.get("loyalty"),
-        defence=card.get("defense"),
-        type_line=card["type_line"],
-        oracle_text=card["oracle_text"],
-        colours=card.get("colors", []),
-        keywords=card.get("keywords", []),
-        produced_mana=card.get("produced_mana"),
-    )
+    if not (rule := rule_cache.get(card["oracle_id"])):
+        rule = Rule(
+            id=str(uuid.uuid4()),
+            colour_identity=card["color_identity"],
+            mana_cost=card["mana_cost"],
+            cmc=card.get("cmc", 0.0),
+            power=card.get("power"),
+            toughness=card.get("toughness"),
+            loyalty=card.get("loyalty"),
+            defence=card.get("defense") or card.get("defence"),
+            type_line=card["type_line"],
+            oracle_text=card.get("oracle_text"),
+            colours=card.get("colors", []),
+            keywords=card.get("keywords", []),
+            produced_mana=card.get("produced_mana"),
+        )
+        rule_cache[card["oracle_id"]] = rule
 
-    legality = Legality(
-        id=str(uuid.uuid4()),
-        **card["legalities"],
-    )
+    if not (legality := legality_cache.get(card["oracle_id"])):
+        legality = Legality(
+            id=str(uuid.uuid4()),
+            game_changer=card.get("game_changer"),
+            **card["legalities"],
+        )
+        legality_cache[card["oracle_id"]] = legality
 
     image = Image(
         id=str(uuid.uuid4()),

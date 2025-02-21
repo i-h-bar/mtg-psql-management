@@ -30,7 +30,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
         legality.duel, legality.explorer, legality.future, legality.gladiator, legality.historic,
         legality.legacy, legality.modern, legality.oathbreaker, legality.oldschool, legality.pauper,
         legality.paupercommander, legality.penny, legality.pioneer, legality.predh, legality.premodern,
-        legality.standard, legality.standardbrawl, legality.timeless, legality.vintage
+        legality.standard, legality.standardbrawl, legality.timeless, legality.vintage, legality.game_changer
     )
 
     rule = card_info.rule
