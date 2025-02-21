@@ -6,6 +6,27 @@ from tqdm import tqdm
 from db.queries import CREATE_SET_MV, CREATE_ARTIST_MV
 
 
+async def create_mv_distinct(pool: Pool):
+    await pool.execute(
+        """
+        create materialized view distinct_cards as
+            select distinct on (front.name) front.id              as front_id,
+                                            front.name            as front_name,
+                                            front.normalised_name as front_normalised_name,
+                                            front_image.png       as front_png,
+                                            back.id               as back_id,
+                                            back.name             as back_name,
+                                            back_image.png        as back_png,
+                                            front.release_date    as release_date
+            from card front
+                     left join card back on front.backside_id = back.id
+                     left join image front_image on front.image_id = front_image.id
+                     left join image back_image on back.image_id = back_image.id
+            order by front.name, front.release_date desc;
+        """
+    )
+
+
 async def create_mv_for_set(set_: str, pool: Pool, pbar: tqdm) -> None:
     try:
         await pool.execute(CREATE_SET_MV.format(set=set_.replace(" ", "_"), normalised_name=set_))

@@ -86,7 +86,8 @@ create table card
     illustration_id uuid references illustration (id),
     legality_id     uuid references legality (id),
     rule_id         uuid references rule (id),
-    set_id          uuid references set (id)
+    set_id          uuid references set (id),
+    backside_id     uuid
 );
 
 
@@ -95,11 +96,4 @@ create table related_token
     id       uuid primary key,
     card_id  uuid references card (id),
     token_id uuid references card (id)
-);
-
-create table related_card
-(
-    id              uuid primary key,
-    card_id         uuid references card (id),
-    related_card_id uuid references card (id)
-);
+)

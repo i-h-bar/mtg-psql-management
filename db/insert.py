@@ -1,12 +1,12 @@
-import asyncpg
 from asyncpg import Pool
 from tqdm import tqdm
 
-from db.queries import INSERT_ARTIST, INSERT_ILLUSTRATION, INSERT_IMAGE, INSERT_LEGALITY, INSERT_RULE, INSERT_SET, \
-    INSERT_CARD, INSERT_RELATED_CARD, INSERT_RELATED_TOKEN
+from db.queries import (
+    INSERT_ARTIST, INSERT_ILLUSTRATION, INSERT_IMAGE, INSERT_LEGALITY, INSERT_RULE, INSERT_SET, INSERT_CARD
+)
 from models.card_info import CardInfo
 from models.tokens import token_relations
-from utils.card_cache import artist_cache, illustration_cache, token_cache
+from utils.card_cache import artist_cache, illustration_cache
 from utils.parse import parse_card
 
 
@@ -47,11 +47,12 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
     await pool.execute(
         INSERT_CARD, card.id, card.oracle_id, card.name, card.normalised_name, card.scryfall_url,
         card.flavour_text, card.release_date, card.reserved, card.rarity, card.artist_id, card.image_id,
-        card.illustration_id, card.legality_id, card.rule_id, card.set_id
+        card.illustration_id, card.legality_id, card.rule_id, card.set_id, card.backside_id
     )
 
     for related_token in card_info.related_tokens:
         token_relations.append(related_token)
+
 
 async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
     card_infos = parse_card(card)
@@ -60,11 +61,5 @@ async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
 
     for card_info in card_infos:
         await _insert_card(card_info, pool)
-
-    for card_info in card_infos:
-        for related_card in card_info.related_cards:
-            await pool.execute(
-                INSERT_RELATED_CARD, related_card.id, related_card.card_id, related_card.related_card_id
-            )
 
     pbar.update()

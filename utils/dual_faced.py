@@ -7,7 +7,6 @@ from models.cards import Card
 from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
-from models.related_cards import RelatedCard
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
@@ -70,15 +69,8 @@ def produce_side(
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,
+        backside_id=reverse_side_id
     )
-
-    related_cards = [
-        RelatedCard(
-            id=str(uuid.uuid4()),
-            card_id=card_model.id,
-            related_card_id=reverse_side_id,
-        )
-    ]
 
     related_tokens = []
     if parts := card.get("all_parts"):
@@ -100,7 +92,6 @@ def produce_side(
         illustration=illustration,
         legality=legality,
         set=set_,
-        related_cards=related_cards,
         related_tokens=related_tokens
     )
 
