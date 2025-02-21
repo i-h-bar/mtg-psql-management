@@ -36,11 +36,9 @@ CREATE_SET_MV = """
             select front.id                     as front_id,
                    front.name                   as front_name,
                    front.normalised_name        as front_normalised_name,
-                   front_image.png              as front_png,
                    front_image.scryfall_url     as front_scryfall_url,
                    back.id                      as back_id,
                    back.name                    as back_name,
-                   back_image.png               as back_png,
                    back_image.scryfall_url      as back_scryfall_url,
                    front.release_date           as release_date
             from card front
@@ -56,11 +54,9 @@ CREATE_ARTIST_MV = """
             select front.id                     as front_id,
                    front.name                   as front_name,
                    front.normalised_name        as front_normalised_name,
-                   front_image.png              as front_png,
                    front_image.scryfall_url     as front_scryfall_url,
                    back.id                      as back_id,
                    back.name                    as back_name,
-                   back_image.png               as back_png,
                    back_image.scryfall_url      as back_scryfall_url,
                    front.release_date           as release_date
             from card front
