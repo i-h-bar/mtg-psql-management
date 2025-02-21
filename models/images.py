@@ -3,4 +3,5 @@ from pydantic import BaseModel
 
 class Image(BaseModel):
     id: str
-    png: str
+    scryfall_url: str
+    png: str | None = None

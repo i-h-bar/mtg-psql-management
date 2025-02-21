@@ -2,7 +2,7 @@ INSERT_ARTIST = "INSERT into artist (id, name, normalised_name) VALUES ($1, $2, 
 
 INSERT_ILLUSTRATION = "INSERT into illustration (id, illustration) VALUES ($1, $2) ON CONFLICT DO NOTHING"
 
-INSERT_IMAGE = "INSERT into image (id, png) VALUES ($1, $2) ON CONFLICT DO NOTHING"
+INSERT_IMAGE = "INSERT into image (id, scryfall_url, png) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
 
 INSERT_LEGALITY = """
 INSERT INTO legality

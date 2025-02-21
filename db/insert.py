@@ -22,7 +22,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
         illustration_cache.add(illustration.id)
 
     image = card_info.image
-    await pool.execute(INSERT_IMAGE, image.id, image.png)
+    await pool.execute(INSERT_IMAGE, image.id, image.scryfall_url, image.png)
 
     legality = card_info.legality
     await pool.execute(

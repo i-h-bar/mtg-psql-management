@@ -9,6 +9,7 @@ create table set
 create table image
 (
     id  uuid primary key,
+    scryfall_url text,
     png text
 );
 

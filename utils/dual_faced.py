@@ -45,7 +45,7 @@ def produce_side(
 
     image = Image(
         id=str(uuid.uuid4()),
-        png=image_uris["png"]
+        scryfall_url=image_uris["png"]
     )
 
     illustration = Illustration(

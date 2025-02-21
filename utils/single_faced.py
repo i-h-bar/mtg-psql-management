@@ -43,7 +43,7 @@ def produce_card(card: dict) -> CardInfo:
 
     image = Image(
         id=str(uuid.uuid4()),
-        png=card["image_uris"]["png"]
+        scryfall_url=card["image_uris"]["png"]
     )
 
     illustration = Illustration(

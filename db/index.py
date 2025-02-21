@@ -17,7 +17,7 @@ async def delete_indexes(pool: Pool) -> None:
 async def add_indexes(pool: Pool) -> None:
     image_index = """    
                 create index image_id_png_index
-                    on image(id, png);
+                    on image(id, scryfall_url, png);
     """
 
     card_index = """
