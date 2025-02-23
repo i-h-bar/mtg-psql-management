@@ -9,15 +9,14 @@ create table set
 create table image
 (
     id  uuid primary key,
-    scryfall_url text,
-    png text
+    scryfall_url text
 );
 
 
 create table illustration
 (
     id           uuid primary key,
-    illustration text
+    scryfall_url text
 );
 
 create table legality

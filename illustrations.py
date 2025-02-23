@@ -14,11 +14,11 @@ load_dotenv()
 
 
 async def fetch_image(record: Record, session: ClientSession, pbar: tqdm) -> None:
-    proposed_path = f"images/{record["id"]}.png"
+    proposed_path = f"illustrations/{record["id"]}.png"
 
     if not Path(proposed_path).exists():
         try:
-            result = await session.get(record["scryfall_url"])
+            result = await session.get(record["illustration"])
         except TimeoutError:
             return
 
@@ -39,9 +39,9 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm) -> Non
 
 async def main():
     async with asyncpg.create_pool(os.getenv("PSQL_URI")) as pool:
-        all_urls = await pool.fetch("SELECT card.id, image.scryfall_url from card join image on card.image_id = image.id")
+        all_urls = await pool.fetch("SELECT id, scryfall_url from illustration")
 
-    all_urls = [record for record in all_urls if not Path(f"images/{record["id"]}.png").exists()]
+    all_urls = [record for record in all_urls if not Path(f"illustrations/{record["id"]}.png").exists()]
 
     pbar = tqdm(total=len(all_urls))
     pbar.set_description("Fetching images")

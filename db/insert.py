@@ -18,11 +18,11 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
 
     illustration = card_info.illustration
     if illustration.id not in illustration_cache:
-        await pool.execute(INSERT_ILLUSTRATION, illustration.id, illustration.illustration)
+        await pool.execute(INSERT_ILLUSTRATION, illustration.id, illustration.scryfall_url)
         illustration_cache.add(illustration.id)
 
     image = card_info.image
-    await pool.execute(INSERT_IMAGE, image.id, image.scryfall_url, image.png)
+    await pool.execute(INSERT_IMAGE, image.id, image.scryfall_url)
 
     legality = card_info.legality
     await pool.execute(

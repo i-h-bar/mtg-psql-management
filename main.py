@@ -11,6 +11,7 @@ from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv, create_mv_distinct
 from db.posty_bulk_inserts import insert_token_relations, insert_combos
+from utils.images import download_missing_card_images, download_missing_illustrations
 
 load_dotenv()
 
@@ -65,6 +66,9 @@ async def main():
                 await asyncio.gather(*(create_mv_for_artist(artist, pool, pbar) for artist in all_artists))
 
             await add_indexes(pool)
+
+            await download_missing_card_images(pool)
+            await download_missing_illustrations(pool)
 
 
 if __name__ == '__main__':

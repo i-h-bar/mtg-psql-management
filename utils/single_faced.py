@@ -34,7 +34,7 @@ def produce_card(card: dict) -> CardInfo:
             power=card.get("power"),
             toughness=card.get("toughness"),
             loyalty=card.get("loyalty"),
-            defence=card.get("defense") or card.get("defence"),
+            defence=card.get("defense"),
             type_line=card["type_line"],
             oracle_text=card.get("oracle_text"),
             colours=card.get("colors", []),
@@ -58,7 +58,7 @@ def produce_card(card: dict) -> CardInfo:
 
     illustration = Illustration(
         id=card.get("illustration_id", str(uuid.uuid4())),
-        illustration=card["image_uris"]["art_crop"]
+        scryfall_url=card["image_uris"]["art_crop"]
     )
 
     set_ = Set(

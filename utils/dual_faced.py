@@ -26,23 +26,23 @@ def produce_side(
         normalised_name=normalise(artist_name),
     )
 
-    if not (rule := rule_cache.get(card.get("oracle_id") or card["name"])):
+    if not (rule := rule_cache.get(side["name"])):
         rule = Rule(
             id=str(uuid.uuid4()),
             colour_identity=card["color_identity"],
-            mana_cost=card.get("mana_cost"),
+            mana_cost=side.get("mana_cost"),
             cmc=card.get("cmc", 0.0),
-            power=card.get("power"),
-            toughness=card.get("toughness"),
-            loyalty=card.get("loyalty"),
-            defence=card.get("defense") or card.get("defence"),
-            type_line=card.get("type_line"),
-            oracle_text=card.get("oracle_text"),
+            power=side.get("power"),
+            toughness=side.get("toughness"),
+            loyalty=side.get("loyalty"),
+            defence=side.get("defense"),
+            type_line=side.get("type_line"),
+            oracle_text=side.get("oracle_text"),
             colours=card.get("colors", []),
             keywords=card.get("keywords", []),
-            produced_mana=card.get("produced_mana"),
+            produced_mana=side.get("produced_mana"),
         )
-        rule_cache[card.get("oracle_id") or card["name"]] = rule
+        rule_cache[side["name"]] = rule
 
     image_uris = side.get("image_uris") or card.get("image_uris")
 
@@ -53,7 +53,7 @@ def produce_side(
 
     illustration = Illustration(
         id=side.get("illustration_id") or card.get("illustration_id", str(uuid.uuid4())),
-        illustration=image_uris["art_crop"]
+        scryfall_url=image_uris["art_crop"]
     )
 
     card_model = Card(
