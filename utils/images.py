@@ -33,6 +33,11 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
 
 
 async def download_missing_card_images(pool: Pool) -> None:
+    try:
+        Path("../mtg_cards/images").mkdir(parents=True)
+    except FileExistsError:
+        pass
+
     all_urls = await pool.fetch("SELECT id, scryfall_url from image")
     all_urls = [record for record in all_urls if not Path(f"../mtg_cards/images/{record["id"]}.png").exists()]
 
@@ -46,6 +51,11 @@ async def download_missing_card_images(pool: Pool) -> None:
 
 
 async def download_missing_illustrations(pool: Pool) -> None:
+    try:
+        Path("../mtg_cards/illustrations").mkdir(parents=True)
+    except FileExistsError:
+        pass
+
     all_urls = await pool.fetch("SELECT id, scryfall_url from illustration")
     all_urls = [record for record in all_urls if not Path(f"../mtg_cards/illustrations/{record["id"]}.png").exists()]
 
