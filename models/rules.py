@@ -15,4 +15,5 @@ class Rule(BaseModel):
     colours: list[str] | None
     keywords: list[str] | None
     produced_mana: list[str] | None
+    rulings_url: str | None
 

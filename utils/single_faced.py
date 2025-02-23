@@ -40,6 +40,7 @@ def produce_card(card: dict) -> CardInfo:
             colours=card.get("colors", []),
             keywords=card.get("keywords", []),
             produced_mana=card.get("produced_mana"),
+            rulings_url=card.get("rulings_uri"),
         )
         rule_cache[card["oracle_id"]] = rule
 

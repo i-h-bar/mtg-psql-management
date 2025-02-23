@@ -41,6 +41,7 @@ def produce_side(
             colours=card.get("colors", []),
             keywords=card.get("keywords", []),
             produced_mana=side.get("produced_mana"),
+            rulings_url=card.get("rulings_uri"),
         )
         rule_cache[side["name"]] = rule
 

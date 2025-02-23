@@ -61,7 +61,8 @@ create table rule
     oracle_text     text,
     colours         char(1)[],
     keywords        text[],
-    produced_mana   char(1)[]
+    produced_mana   char(1)[],
+    rulings_url     text
 );
 
 create table artist

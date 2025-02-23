@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import sys
 
 import aiofiles
 import asyncpg
@@ -11,14 +12,17 @@ from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv, create_mv_distinct
 from db.posty_bulk_inserts import insert_token_relations, insert_combos
+from utils.data import load_scryfall_data
 from utils.images import download_missing_card_images, download_missing_illustrations
 
 load_dotenv()
 
 
 async def main():
-    async with aiofiles.open(os.getenv("FILE"), encoding="utf-8") as file:
-        data = json.loads(await file.read())
+    data = await load_scryfall_data()
+    if not data:
+        print("Scryfall data could not be loaded.")
+        sys.exit(1)
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
         try:

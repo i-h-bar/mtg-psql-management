@@ -37,7 +37,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
     await pool.execute(
         INSERT_RULE, rule.id, rule.colour_identity, rule.mana_cost, rule.cmc, rule.power, rule.toughness,
         rule.loyalty, rule.defence, rule.type_line, rule.oracle_text, rule.colours, rule.keywords,
-        rule.produced_mana
+        rule.produced_mana, rule.rulings_url
     )
 
     set_ = card_info.set
