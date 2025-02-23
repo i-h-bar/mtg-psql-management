@@ -42,7 +42,7 @@ async def download_missing_card_images(pool: Pool) -> None:
 
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
-            await asyncio.gather(*(fetch_image(record, session, pbar, "images/") for record in all_urls))
+            await asyncio.gather(*(fetch_image(record, session, pbar, "../mtg_cards/images/") for record in all_urls))
 
 
 async def download_missing_illustrations(pool: Pool) -> None:
@@ -55,4 +55,4 @@ async def download_missing_illustrations(pool: Pool) -> None:
 
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
-            await asyncio.gather(*(fetch_image(record, session, pbar, "illustrations/") for record in all_urls))
+            await asyncio.gather(*(fetch_image(record, session, pbar, "../mtg_cards/illustrations/") for record in all_urls))
