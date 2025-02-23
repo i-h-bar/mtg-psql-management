@@ -11,6 +11,7 @@ from models.legalities import Legality
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
+from utils.art_ids import parse_art_id
 from utils.normalise import normalise
 from utils.single_faced import rule_cache, legality_cache
 
@@ -46,14 +47,13 @@ def produce_side(
         rule_cache[side["name"]] = rule
 
     image_uris = side.get("image_uris") or card.get("image_uris")
-
     image = Image(
-        id=str(uuid.uuid4()),
+        id=parse_art_id(image_uris["png"]),
         scryfall_url=image_uris["png"]
     )
 
     illustration = Illustration(
-        id=side.get("illustration_id") or card.get("illustration_id", str(uuid.uuid4())),
+        id=parse_art_id(image_uris["art_crop"]),
         scryfall_url=image_uris["art_crop"]
     )
 

@@ -1,7 +1,7 @@
 import asyncio
-import json
 import os
 import sys
+from pathlib import Path
 
 import aiofiles
 import asyncpg
@@ -11,7 +11,8 @@ from tqdm import tqdm
 from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv, create_mv_distinct
-from db.posty_bulk_inserts import insert_token_relations, insert_combos
+from db.post_bulk_inserts import insert_token_relations, insert_combos
+from utils.combo_updates import update_combos
 from utils.data import load_scryfall_data
 from utils.images import download_missing_card_images, download_missing_illustrations
 
@@ -54,6 +55,7 @@ async def main():
 
             await insert_token_relations(pool)
             await insert_combos(pool)
+            await update_combos(data, pool)
 
             await create_mv_distinct(pool)
 
@@ -73,6 +75,7 @@ async def main():
 
             await download_missing_card_images(pool)
             await download_missing_illustrations(pool)
+            print(f"Card images can be found: {str(Path("../mtg_cards/").absolute())}")
 
 
 if __name__ == '__main__':

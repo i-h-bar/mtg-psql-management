@@ -33,36 +33,72 @@ INSERT_COMBO = "INSERT INTO combo (id, card_id, combo_card_id) VALUES ($1, $2, $
 
 CREATE_SET_MV = """
         create materialized view set_{set} as
-            select front.id                     as front_id,
-                   front.name                   as front_name,
-                   front.normalised_name        as front_normalised_name,
-                   front_image.scryfall_url     as front_scryfall_url,
-                   back.id                      as back_id,
-                   back.name                    as back_name,
-                   back_image.scryfall_url      as back_scryfall_url,
-                   front.release_date           as release_date
+            select set.id                 as set_id,
+                   front.id               as front_id,
+                   front.name             as front_name,
+                   front.normalised_name  as front_normalised_name,
+                   front.image_id         as front_image_id
+                   front_rule.mana_cost   as front_mana_cost,
+                   front_rule.power       as front_power,
+                   front_rule.toughness   as front_toughness,
+                   front_rule.loyalty     as front_loyalty,
+                   front_rule.defence     as front_defence,
+                   front_rule.type_line   as front_type_line,
+                   front_rule.keywords    as front_keywords,
+                   front_rule.oracle_text as front_oracle_text,
+            
+                   back.id                as back_id,
+                   back.name              as back_name,
+                   back.image_id          as back_image_id
+                   back_rule.mana_cost    as back_mana_cost,
+                   back_rule.power        as back_power,
+                   back_rule.toughness    as back_toughness,
+                   back_rule.loyalty      as back_loyalty,
+                   back_rule.defence      as back_defence,
+                   back_rule.type_line    as back_type_line,
+                   back_rule.keywords     as back_keywords,
+                   back_rule.oracle_text  as back_oracle_text,
+            
+                   front.release_date     as release_date
             from card front
                      left join card back on front.backside_id = back.id
-                     left join image front_image on front.image_id = front_image.id
-                     left join image back_image on back.image_id = back_image.id
+                     left join rule front_rule on front.rule_id = front_rule.id
+                     left join rule back_rule on back.rule_id = back_rule.id
                      join set on front.set_id = set.id
-            where set.normalised_name = '{normalised_name}'
+            where set.normalised_name = '{normalised_name}';
         """
 
 CREATE_ARTIST_MV = """
         create materialized view artist_{artist} as
-            select front.id                     as front_id,
-                   front.name                   as front_name,
-                   front.normalised_name        as front_normalised_name,
-                   front_image.scryfall_url     as front_scryfall_url,
-                   back.id                      as back_id,
-                   back.name                    as back_name,
-                   back_image.scryfall_url      as back_scryfall_url,
-                   front.release_date           as release_date
+            select artist.id              as artist_id,
+                   front.id               as front_id,
+                   front.name             as front_name,
+                   front.normalised_name  as front_normalised_name,
+                   front_rule.mana_cost   as front_mana_cost,
+                   front_rule.power       as front_power,
+                   front_rule.toughness   as front_toughness,
+                   front_rule.loyalty     as front_loyalty,
+                   front_rule.defence     as front_defence,
+                   front_rule.type_line   as front_type_line,
+                   front_rule.keywords    as front_keywords,
+                   front_rule.oracle_text as front_oracle_text,
+            
+                   back.id                as back_id,
+                   back.name              as back_name,
+                   back_rule.mana_cost    as back_mana_cost,
+                   back_rule.power        as back_power,
+                   back_rule.toughness    as back_toughness,
+                   back_rule.loyalty      as back_loyalty,
+                   back_rule.defence      as back_defence,
+                   back_rule.type_line    as back_type_line,
+                   back_rule.keywords     as back_keywords,
+                   back_rule.oracle_text  as back_oracle_text,
+            
+                   front.release_date     as release_date
             from card front
                      left join card back on front.backside_id = back.id
-                     left join image front_image on front.image_id = front_image.id
-                     left join image back_image on back.image_id = back_image.id
+                     left join rule front_rule on front.rule_id = front_rule.id
+                     left join rule back_rule on back.rule_id = back_rule.id
                      join artist on front.artist_id = artist.id
-        where artist.normalised_name = '{normalised_name}';
+            where artist.normalised_name = '{normalised_name}';
 """

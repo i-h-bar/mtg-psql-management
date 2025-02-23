@@ -11,6 +11,7 @@ from models.legalities import Legality
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
+from utils.art_ids import parse_art_id
 from utils.normalise import normalise
 
 
@@ -53,12 +54,12 @@ def produce_card(card: dict) -> CardInfo:
         legality_cache[card["oracle_id"]] = legality
 
     image = Image(
-        id=str(uuid.uuid4()),
+        id=parse_art_id(card["image_uris"]["png"]),
         scryfall_url=card["image_uris"]["png"]
     )
 
     illustration = Illustration(
-        id=card.get("illustration_id", str(uuid.uuid4())),
+        id=parse_art_id(card["image_uris"]["art_crop"]),
         scryfall_url=card["image_uris"]["art_crop"]
     )
 
