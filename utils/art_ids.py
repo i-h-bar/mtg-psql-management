@@ -20,6 +20,7 @@ def parse_art_id(scryfall_url: str) -> str:
         raise
 
     side = match.group(2)
-    return str(UUID(hex=hex(int(UUID(image_id).hex, base=16) + add[side])))
-
-
+    if side == "front":
+        return image_id
+    else:
+        return str(UUID(hex=hex(int(UUID(image_id).hex, base=16) + add[side])))
