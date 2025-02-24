@@ -15,6 +15,7 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
         try:
             result = await session.get(record["scryfall_url"])
         except TimeoutError:
+            pbar.update()
             return
 
         if result.status != 200:
@@ -24,6 +25,7 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
         try:
             png = await result.read()
         except Exception:
+            pbar.update()
             return
 
         async with aiofiles.open(proposed_path, "wb") as f:

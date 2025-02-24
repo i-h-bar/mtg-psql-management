@@ -17,7 +17,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool):
         artist_cache.add(artist.id)
 
     illustration = card_info.illustration
-    if illustration.id not in illustration_cache:
+    if illustration and illustration.id not in illustration_cache:
         await pool.execute(INSERT_ILLUSTRATION, illustration.id, illustration.scryfall_url)
         illustration_cache.add(illustration.id)
 

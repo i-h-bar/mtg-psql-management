@@ -16,7 +16,7 @@ class CardInfo(BaseModel):
     artist: Artist
     legality: Legality
     image: Image
-    illustration: Illustration
+    illustration: Illustration | None
     rule: Rule
     set: Set
     related_tokens: list[RelatedToken] = Field(default_factory=list)

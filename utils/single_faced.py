@@ -17,6 +17,7 @@ from utils.normalise import normalise
 
 rule_cache: dict[str, Rule] = {}
 legality_cache: dict[str, Legality] = {}
+illustration_cache: dict[str, Illustration] = {}
 
 
 def produce_card(card: dict) -> CardInfo:
@@ -58,10 +59,15 @@ def produce_card(card: dict) -> CardInfo:
         scryfall_url=card["image_uris"]["png"]
     )
 
-    illustration = Illustration(
-        id=parse_art_id(card["image_uris"]["art_crop"]),
-        scryfall_url=card["image_uris"]["art_crop"]
-    )
+    if not card.get("illustration_id"):
+        illustration = None
+
+    elif not (illustration := illustration_cache.get(card["illustration_id"])):
+        illustration = Illustration(
+            id=card["illustration_id"],
+            scryfall_url=card["image_uris"]["art_crop"]
+        )
+        illustration_cache[card["illustration_id"]] = illustration
 
     set_ = Set(
         id=card["set_id"],
@@ -82,7 +88,7 @@ def produce_card(card: dict) -> CardInfo:
         rarity=card["rarity"],
         artist_id=artist.id,
         image_id=image.id,
-        illustration_id=illustration.id,
+        illustration_id=None if not illustration else illustration.id,
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,

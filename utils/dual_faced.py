@@ -13,7 +13,7 @@ from models.rules import Rule
 from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.normalise import normalise
-from utils.single_faced import rule_cache, legality_cache
+from utils.single_faced import rule_cache, legality_cache, illustration_cache
 
 
 def produce_side(
@@ -52,10 +52,16 @@ def produce_side(
         scryfall_url=image_uris["png"]
     )
 
-    illustration = Illustration(
-        id=parse_art_id(image_uris["art_crop"]),
-        scryfall_url=image_uris["art_crop"]
-    )
+    if not side.get("illustration_id") and not card.get("illustration_id"):
+        illustration = None
+
+    elif not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
+        illustration = Illustration(
+            id=side.get("illustration_id") or card["illustration_id"],
+            scryfall_url=image_uris["art_crop"]
+        )
+        illustration_cache[side.get("illustration_id") or card["illustration_id"]] = illustration
+
 
     card_model = Card(
         id=side_id,
@@ -69,7 +75,7 @@ def produce_side(
         rarity=card["rarity"],
         artist_id=artist.id,
         image_id=image.id,
-        illustration_id=illustration.id,
+        illustration_id=None if not illustration else illustration.id,
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,
