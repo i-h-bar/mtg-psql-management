@@ -74,6 +74,7 @@ CREATE_ARTIST_MV = """
                    front.id               as front_id,
                    front.name             as front_name,
                    front.normalised_name  as front_normalised_name,
+                   front.image_id         as front_image_id,
                    front_rule.mana_cost   as front_mana_cost,
                    front_rule.power       as front_power,
                    front_rule.toughness   as front_toughness,
@@ -85,6 +86,7 @@ CREATE_ARTIST_MV = """
             
                    back.id                as back_id,
                    back.name              as back_name,
+                   back.image_id          as back_image_id,
                    back_rule.mana_cost    as back_mana_cost,
                    back_rule.power        as back_power,
                    back_rule.toughness    as back_toughness,

@@ -57,6 +57,8 @@ async def main():
             await insert_combos(pool)
             await update_combos(data, pool)
 
+            await add_indexes(pool)
+
             await create_mv_distinct(pool)
 
             all_sets = await pool.fetchval("select array_agg(normalised_name) from set;")
@@ -71,7 +73,7 @@ async def main():
                 pbar.refresh()
                 await asyncio.gather(*(create_mv_for_artist(artist, pool, pbar) for artist in all_artists))
 
-            await add_indexes(pool)
+
 
             await download_missing_card_images(pool)
             await download_missing_illustrations(pool)
