@@ -57,9 +57,8 @@ async def main():
             await insert_combos(pool)
             await update_combos(data, pool)
 
-            await add_indexes(pool)
-
             await create_mv_distinct(pool)
+            await add_indexes(pool)
 
             all_sets = await pool.fetchval("select array_agg(normalised_name) from set;")
             with tqdm(total=len(all_sets)) as pbar:
