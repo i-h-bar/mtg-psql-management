@@ -12,6 +12,7 @@ from db.index import add_indexes, delete_indexes
 from db.insert import insert_card
 from db.materialized_view import create_mv_for_set, create_mv_for_artist, drop_all_mv, create_mv_distinct
 from db.post_bulk_inserts import insert_token_relations, insert_combos
+from db.truncate import truncate_db
 from utils.combo_updates import update_combos
 from utils.data import load_scryfall_data
 from utils.images import download_missing_card_images, download_missing_illustrations
@@ -45,6 +46,7 @@ async def main():
         data = tuple(card for card in data if card["id"] not in card_ids and card.get("set_type") != "memorabilia")
 
         if data:
+            await truncate_db(pool)
             await delete_indexes(pool)
             await drop_all_mv(pool)
 
