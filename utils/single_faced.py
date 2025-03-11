@@ -20,7 +20,15 @@ legality_cache: dict[str, Legality] = {}
 illustration_cache: dict[str, Illustration] = {}
 
 
-def produce_card(card: dict) -> CardInfo:
+def produce_card(card: dict) -> CardInfo | None:
+    if image_id := parse_art_id(card["image_uris"]["png"]):
+        image = Image(
+            id=image_id,
+            scryfall_url=card["image_uris"]["png"]
+        )
+    else:
+        return
+
     artist = Artist(
         id=card.get("artist_ids", MISSING_ID_ID)[0],
         name=card["artist"] or MISSING_ARTIST,
@@ -53,11 +61,6 @@ def produce_card(card: dict) -> CardInfo:
             **card["legalities"],
         )
         legality_cache[card["oracle_id"]] = legality
-
-    image = Image(
-        id=parse_art_id(card["image_uris"]["png"]),
-        scryfall_url=card["image_uris"]["png"]
-    )
 
     if not card.get("illustration_id"):
         illustration = None

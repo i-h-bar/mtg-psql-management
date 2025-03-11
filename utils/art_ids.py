@@ -10,14 +10,13 @@ add = {
     "back": 1,
 }
 
-def parse_art_id(scryfall_url: str) -> str:
+def parse_art_id(scryfall_url: str) -> str | None:
     match = art_id_regex.match(scryfall_url)
 
     try:
         image_id = match.group(3)
     except AttributeError:
-        print(scryfall_url)
-        raise
+        return None
 
     side = match.group(2)
     if side == "front":

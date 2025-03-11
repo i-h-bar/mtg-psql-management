@@ -18,7 +18,16 @@ from utils.single_faced import rule_cache, legality_cache, illustration_cache
 
 def produce_side(
         card: dict, side: dict, side_id: str, reverse_side_id: str, legality: Legality, set_: Set
-) -> CardInfo:
+) -> CardInfo | None:
+    image_uris = side.get("image_uris") or card.get("image_uris")
+    if image_id := parse_art_id(image_uris["png"]):
+        image = Image(
+            id=image_id,
+            scryfall_url=image_uris["png"]
+        )
+    else:
+        return None
+
     artist_id = (side.get("artist_ids") or card.get("artist_ids") or MISSING_ID_ID)[0]
     artist_name = side.get("artist") or card.get("artist") or MISSING_ARTIST
     artist = Artist(
@@ -46,11 +55,6 @@ def produce_side(
         )
         rule_cache[side["name"]] = rule
 
-    image_uris = side.get("image_uris") or card.get("image_uris")
-    image = Image(
-        id=parse_art_id(image_uris["png"]),
-        scryfall_url=image_uris["png"]
-    )
 
     if not side.get("illustration_id") and not card.get("illustration_id"):
         illustration = None
@@ -114,7 +118,7 @@ def produce_side(
     )
 
 
-def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo]:
+def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo] | None:
     back_id = str(uuid.uuid4())
 
     if not (legality := legality_cache.get(card["name"])):
@@ -133,6 +137,11 @@ def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardIn
     )
 
     front = produce_side(card, front, card["id"], back_id, legality, set_)
+    if not front:
+        return None
+
     back = produce_side(card, back, back_id, front.card.id, legality, set_)
+    if not back:
+        return None
 
     return front, back

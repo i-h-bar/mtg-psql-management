@@ -61,6 +61,7 @@ async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
     card_infos = parse_card(card)
     if not card_infos:
         pbar.update()
+        return
 
     for card_info in card_infos:
         await _insert_card(card_info, pool)

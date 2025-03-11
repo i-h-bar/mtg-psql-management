@@ -13,7 +13,7 @@ class Card(BaseModel):
     reserved: bool
     rarity: str
     artist_id: str
-    image_id: str
+    image_id: str | None
     illustration_id: str | None
     legality_id: str
     rule_id: str
