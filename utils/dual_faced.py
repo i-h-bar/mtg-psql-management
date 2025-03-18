@@ -20,7 +20,7 @@ def produce_side(
         card: dict, side: dict, side_id: str, reverse_side_id: str, legality: Legality, set_: Set
 ) -> CardInfo | None:
     image_uris = side.get("image_uris") or card.get("image_uris")
-    if image_id := parse_art_id(image_uris["png"]):
+    if image_uris and (image_id := parse_art_id(image_uris.get("png"))):
         image = Image(
             id=image_id,
             scryfall_url=image_uris["png"]

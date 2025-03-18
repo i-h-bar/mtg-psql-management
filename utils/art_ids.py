@@ -10,7 +10,10 @@ add = {
     "back": 1,
 }
 
-def parse_art_id(scryfall_url: str) -> str | None:
+def parse_art_id(scryfall_url: str | None) -> str | None:
+    if not scryfall_url:
+        return None
+
     match = art_id_regex.match(scryfall_url)
 
     try:

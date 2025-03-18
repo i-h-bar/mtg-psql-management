@@ -2,6 +2,7 @@ from asyncpg import Pool
 
 
 async def truncate_db(pool: Pool) -> None:
+    print("Truncating current database...")
     await pool.execute("truncate table related_token restart identity cascade")
     await pool.execute("truncate table combo restart identity cascade")
     await pool.execute("truncate table card restart identity cascade")

@@ -5,6 +5,7 @@ from asyncpg import Pool
 
 
 async def delete_indexes(pool: Pool) -> None:
+    print("Deleting indexes...")
     try:
         await asyncio.gather(
             pool.execute("drop index rule_multi_index"),

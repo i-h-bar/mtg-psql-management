@@ -67,6 +67,7 @@ async def create_mv_for_artist(artist: str, pool: Pool, pbar: tqdm) -> None:
     pbar.update()
 
 async def drop_all_mv(pool: Pool) -> None:
+    print("Dropping all materialised views...")
     mvs = await pool.fetchval(
         """SELECT array_agg(oid::regclass::text)
             FROM   pg_class

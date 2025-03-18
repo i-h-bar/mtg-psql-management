@@ -43,10 +43,9 @@ async def main():
 
             card_ids = set()
 
-        data = tuple(card for card in data if card["id"] not in card_ids and card.get("set_type") != "memorabilia")
+        data = tuple(card for card in data if card["id"] not in card_ids and (card.get("set_type") != "memorabilia" and card.get("image_uris", {}).get("png") != 'https://errors.scryfall.com/soon.jpg'))
 
         if data:
-            await truncate_db(pool)
             await delete_indexes(pool)
             await drop_all_mv(pool)
 
@@ -62,7 +61,7 @@ async def main():
             await create_mv_distinct(pool)
             await add_indexes(pool)
 
-            all_sets = await pool.fetchval("select array_agg(normalised_name) from set;")
+            all_sets = await pool.fetchval("select array_agg(normalised_name) from set;") or []
             with tqdm(total=len(all_sets)) as pbar:
                 pbar.set_description("Creating set MVs")
                 pbar.refresh()
@@ -80,6 +79,8 @@ async def main():
             await download_missing_illustrations(pool)
             print(f"Card images can be found: {str(Path("../mtg_cards/").absolute())}")
 
+        else:
+            print("DB is up to date.")
 
 if __name__ == '__main__':
     asyncio.run(main())
