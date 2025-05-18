@@ -41,11 +41,13 @@ async def create_mv_distinct(pool: Pool):
                                                 back_rule.keywords           as back_keywords,
                                                 back_rule.oracle_text        as back_oracle_text,
 
-                                                front.release_date     as release_date
+                                                front.release_date           as release_date,
+                                                artist.name                  as artist
                 from card front
                          left join card back on front.backside_id = back.id
                          left join rule front_rule on front.rule_id = front_rule.id
                          left join rule back_rule on back.rule_id = back_rule.id
+                         left join artist on front.artist_id = artist.id
                 order by front.name, front.release_date desc;
         """
     )

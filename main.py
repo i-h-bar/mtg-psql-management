@@ -78,8 +78,6 @@ async def main():
                 pbar.refresh()
                 await asyncio.gather(*(create_mv_for_artist(artist, pool, pbar) for artist in all_artists))
 
-
-
             await download_missing_card_images(pool)
             await download_missing_illustrations(pool)
             print(f"Card images can be found: {str(Path("../mtg_cards/").absolute())}")
