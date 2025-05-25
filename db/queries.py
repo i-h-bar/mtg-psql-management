@@ -66,7 +66,8 @@ CREATE_SET_MV = """
                    back_rule.oracle_text        as back_oracle_text,
             
                    front.release_date           as release_date,
-                   artist.name                  as artist
+                   artist.name                  as artist,
+                   set.name                     as set_name
             from card front
                      left join card back on front.backside_id = back.id
                      left join rule front_rule on front.rule_id = front_rule.id
@@ -111,11 +112,14 @@ CREATE_ARTIST_MV = """
                    back_rule.oracle_text        as back_oracle_text,
             
                    front.release_date           as release_date,
-                   artist.name                  as artist
+                   artist.name                  as artist,
+                   set.name                     as set_name
             from card front
                      left join card back on front.backside_id = back.id
                      left join rule front_rule on front.rule_id = front_rule.id
                      left join rule back_rule on back.rule_id = back_rule.id
+                     left join set on front.set_id = set.id
                      join artist on front.artist_id = artist.id
+                     
             where artist.normalised_name = '{normalised_name}';
 """
