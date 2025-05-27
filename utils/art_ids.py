@@ -10,6 +10,7 @@ add = {
     "back": 1,
 }
 
+
 def parse_art_id(scryfall_url: str | None) -> str | None:
     if not scryfall_url:
         return None

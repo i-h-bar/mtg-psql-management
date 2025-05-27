@@ -17,14 +17,16 @@ from utils.single_faced import rule_cache, legality_cache, illustration_cache
 
 
 def produce_side(
-        card: dict, side: dict, side_id: str, reverse_side_id: str, legality: Legality, set_: Set
+    card: dict,
+    side: dict,
+    side_id: str,
+    reverse_side_id: str,
+    legality: Legality,
+    set_: Set,
 ) -> CardInfo | None:
     image_uris = side.get("image_uris") or card.get("image_uris")
     if image_uris and (image_id := parse_art_id(image_uris.get("png"))):
-        image = Image(
-            id=image_id,
-            scryfall_url=image_uris["png"]
-        )
+        image = Image(id=image_id, scryfall_url=image_uris["png"])
     else:
         return None
 
@@ -55,17 +57,21 @@ def produce_side(
         )
         rule_cache[side["name"]] = rule
 
-
     if not side.get("illustration_id") and not card.get("illustration_id"):
         illustration = None
 
-    elif not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
+    elif not (
+        illustration := illustration_cache.get(
+            side.get("illustration_id") or card["illustration_id"]
+        )
+    ):
         illustration = Illustration(
             id=side.get("illustration_id") or card["illustration_id"],
-            scryfall_url=image_uris["art_crop"]
+            scryfall_url=image_uris["art_crop"],
         )
-        illustration_cache[side.get("illustration_id") or card["illustration_id"]] = illustration
-
+        illustration_cache[side.get("illustration_id") or card["illustration_id"]] = (
+            illustration
+        )
 
     card_model = Card(
         id=side_id,
@@ -83,7 +89,7 @@ def produce_side(
         legality_id=legality.id,
         rule_id=rule.id,
         set_id=set_.id,
-        backside_id=reverse_side_id
+        backside_id=reverse_side_id,
     )
 
     combos = []
@@ -92,18 +98,10 @@ def produce_side(
         for part in parts:
             if part["component"] == "token":
                 related_tokens.append(
-                    RelatedToken(
-                        token_id=part["id"],
-                        card_id=card_model.id
-                    )
+                    RelatedToken(token_id=part["id"], card_id=card_model.id)
                 )
             elif part["component"] == "combo_piece":
-                combos.append(
-                    Combo(
-                        card_id=card_model.id,
-                        combo_card_id=part["id"]
-                    )
-                )
+                combos.append(Combo(card_id=card_model.id, combo_card_id=part["id"]))
 
     return CardInfo(
         card=card_model,
@@ -114,11 +112,13 @@ def produce_side(
         legality=legality,
         set=set_,
         related_tokens=related_tokens,
-        combos=combos
+        combos=combos,
     )
 
 
-def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo] | None:
+def produce_dual_faced_card(
+    card: dict, front: dict, back: dict
+) -> tuple[CardInfo, CardInfo] | None:
     back_id = str(uuid.uuid4())
 
     if not (legality := legality_cache.get(card["name"])):

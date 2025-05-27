@@ -15,6 +15,7 @@ file_regex = re.compile(r"default-cards-(\d+)\.json")
 
 
 def look_for_data_file() -> str | None:
+    return_file = None
     for file in Path().iterdir():
         if match := file_regex.match(file.name):
             date = datetime.strptime(match.group(1), "%Y%m%d%H%M%S")
@@ -22,7 +23,9 @@ def look_for_data_file() -> str | None:
                 print(f"Deleting stale card data: {file.name}")
                 file.unlink()
             else:
-                return file
+                return_file = file
+
+    return return_file
 
 
 async def load_data_file(data_file: str | Path) -> list[dict]:
@@ -41,10 +44,13 @@ async def download_scryfall_data() -> list[dict] | None:
                 response = await session.get(category["download_uri"])
                 data = await response.json()
 
-                async with aiofiles.open(
-                        f"default-cards-{datetime.now().strftime("%Y%m%d%H%M%S")}.json", "w", encoding="utf-8"
-                ) as file:
-                    await file.write(json.dumps(data))
+                if os.getenv("DEV"):
+                    async with aiofiles.open(
+                        f"default-cards-{datetime.now().strftime('%Y%m%d%H%M%S')}.json",
+                        "w",
+                        encoding="utf-8",
+                    ) as file:
+                        await file.write(json.dumps(data))
 
                 return data
 
@@ -54,7 +60,7 @@ async def load_scryfall_data() -> list[dict] | None:
         print("Found file specified by environment variables.")
         return await load_data_file(data_file)
 
-    if data_file := look_for_data_file():
+    if (data_file := look_for_data_file()) and os.getenv("DEV"):
         print("Found cached data from previous download less than a week old.")
         return await load_data_file(data_file)
 

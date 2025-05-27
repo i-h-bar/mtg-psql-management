@@ -16,4 +16,3 @@ class Rule(BaseModel):
     keywords: list[str] | None
     produced_mana: list[str] | None
     rulings_url: str | None
-

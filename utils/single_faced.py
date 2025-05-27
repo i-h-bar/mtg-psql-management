@@ -22,10 +22,7 @@ illustration_cache: dict[str, Illustration] = {}
 
 def produce_card(card: dict) -> CardInfo | None:
     if image_id := parse_art_id(card["image_uris"]["png"]):
-        image = Image(
-            id=image_id,
-            scryfall_url=card["image_uris"]["png"]
-        )
+        image = Image(id=image_id, scryfall_url=card["image_uris"]["png"])
     else:
         return
 
@@ -67,8 +64,7 @@ def produce_card(card: dict) -> CardInfo | None:
 
     elif not (illustration := illustration_cache.get(card["illustration_id"])):
         illustration = Illustration(
-            id=card["illustration_id"],
-            scryfall_url=card["image_uris"]["art_crop"]
+            id=card["illustration_id"], scryfall_url=card["image_uris"]["art_crop"]
         )
         illustration_cache[card["illustration_id"]] = illustration
 
@@ -103,18 +99,10 @@ def produce_card(card: dict) -> CardInfo | None:
         for part in parts:
             if part["component"] == "token":
                 related_tokens.append(
-                    RelatedToken(
-                        token_id=part["id"],
-                        card_id=card_model.id
-                    )
+                    RelatedToken(token_id=part["id"], card_id=card_model.id)
                 )
             elif part["component"] == "compo_piece":
-                combos.append(
-                    Combo(
-                        card_id=card_model.id,
-                        combo_card_id=part["id"]
-                    )
-                )
+                combos.append(Combo(card_id=card_model.id, combo_card_id=part["id"]))
 
     return CardInfo(
         card=card_model,
@@ -125,5 +113,5 @@ def produce_card(card: dict) -> CardInfo | None:
         illustration=illustration,
         set=set_,
         related_tokens=related_tokens,
-        combos=combos
+        combos=combos,
     )

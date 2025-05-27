@@ -11,10 +11,11 @@ async def delete_indexes(pool: Pool) -> None:
             pool.execute("drop index rule_multi_index"),
             pool.execute("drop index card_index_id_name_date_rule_id"),
             pool.execute("drop index distinct_cards_ix"),
-            return_exceptions=False
+            return_exceptions=False,
         )
     except asyncpg.exceptions.UndefinedObjectError:
         pass
+
 
 async def add_indexes(pool: Pool) -> None:
     rule_index = """    
@@ -68,7 +69,5 @@ async def add_indexes(pool: Pool) -> None:
         pool.execute(rule_index),
         pool.execute(card_index),
         pool.execute(distinct_cards_ix),
-        return_exceptions=False
+        return_exceptions=False,
     )
-
-

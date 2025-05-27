@@ -57,7 +57,9 @@ async def create_mv_distinct(pool: Pool):
 
 async def create_mv_for_set(set_: str, pool: Pool, pbar: tqdm) -> None:
     try:
-        await pool.execute(CREATE_SET_MV.format(set=set_.replace(" ", "_"), normalised_name=set_))
+        await pool.execute(
+            CREATE_SET_MV.format(set=set_.replace(" ", "_"), normalised_name=set_)
+        )
     except asyncpg.exceptions.DuplicateTableError:
         pass
 
@@ -66,11 +68,16 @@ async def create_mv_for_set(set_: str, pool: Pool, pbar: tqdm) -> None:
 
 async def create_mv_for_artist(artist: str, pool: Pool, pbar: tqdm) -> None:
     try:
-        await pool.execute(CREATE_ARTIST_MV.format(artist=artist.replace(" ", "_"), normalised_name=artist))
+        await pool.execute(
+            CREATE_ARTIST_MV.format(
+                artist=artist.replace(" ", "_"), normalised_name=artist
+            )
+        )
     except asyncpg.exceptions.DuplicateTableError:
         pass
 
     pbar.update()
+
 
 async def drop_all_mv(pool: Pool) -> None:
     print("Dropping all materialised views...")
