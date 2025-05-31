@@ -1,12 +1,15 @@
-import asyncpg
+import contextlib
+import logging
 
 from asyncpg import Pool
+from asyncpg.exceptions import DuplicateTableError
 from tqdm import tqdm
 
-from db.queries import CREATE_SET_MV, CREATE_ARTIST_MV
+from db.queries import CREATE_ARTIST_MV, CREATE_SET_MV
 
+logger = logging.getLogger(__name__)
 
-async def create_mv_distinct(pool: Pool):
+async def create_mv_distinct(pool: Pool) -> None:
     await pool.execute(
         """
             create materialized view distinct_cards as
@@ -56,31 +59,21 @@ async def create_mv_distinct(pool: Pool):
 
 
 async def create_mv_for_set(set_: str, pool: Pool, pbar: tqdm) -> None:
-    try:
-        await pool.execute(
-            CREATE_SET_MV.format(set=set_.replace(" ", "_"), normalised_name=set_)
-        )
-    except asyncpg.exceptions.DuplicateTableError:
-        pass
+    with contextlib.suppress(DuplicateTableError):
+        await pool.execute(CREATE_SET_MV.format(set=set_.replace(" ", "_"), normalised_name=set_))
 
     pbar.update()
 
 
 async def create_mv_for_artist(artist: str, pool: Pool, pbar: tqdm) -> None:
-    try:
-        await pool.execute(
-            CREATE_ARTIST_MV.format(
-                artist=artist.replace(" ", "_"), normalised_name=artist
-            )
-        )
-    except asyncpg.exceptions.DuplicateTableError:
-        pass
+    with contextlib.suppress(DuplicateTableError):
+        await pool.execute(CREATE_ARTIST_MV.format(artist=artist.replace(" ", "_"), normalised_name=artist))
 
     pbar.update()
 
 
 async def drop_all_mv(pool: Pool) -> None:
-    print("Dropping all materialised views...")
+    logger.info("Dropping all materialised views...")
     mvs = await pool.fetchval(
         """SELECT array_agg(oid::regclass::text)
             FROM   pg_class

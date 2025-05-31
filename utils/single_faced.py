@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
+from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
 from models.card_info import CardInfo
 from models.cards import Card
 from models.combos import Combo
@@ -14,7 +14,6 @@ from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.normalise import normalise
 
-
 rule_cache: dict[str, Rule] = {}
 legality_cache: dict[str, Legality] = {}
 illustration_cache: dict[str, Illustration] = {}
@@ -24,7 +23,7 @@ def produce_card(card: dict) -> CardInfo | None:
     if image_id := parse_art_id(card["image_uris"]["png"]):
         image = Image(id=image_id, scryfall_url=card["image_uris"]["png"])
     else:
-        return
+        return None
 
     artist = Artist(
         id=card.get("artist_ids", MISSING_ID_ID)[0],
@@ -63,9 +62,7 @@ def produce_card(card: dict) -> CardInfo | None:
         illustration = None
 
     elif not (illustration := illustration_cache.get(card["illustration_id"])):
-        illustration = Illustration(
-            id=card["illustration_id"], scryfall_url=card["image_uris"]["art_crop"]
-        )
+        illustration = Illustration(id=card["illustration_id"], scryfall_url=card["image_uris"]["art_crop"])
         illustration_cache[card["illustration_id"]] = illustration
 
     set_ = Set(
@@ -98,9 +95,7 @@ def produce_card(card: dict) -> CardInfo | None:
     if parts := card.get("all_parts"):
         for part in parts:
             if part["component"] == "token":
-                related_tokens.append(
-                    RelatedToken(token_id=part["id"], card_id=card_model.id)
-                )
+                related_tokens.append(RelatedToken(token_id=part["id"], card_id=card_model.id))
             elif part["component"] == "compo_piece":
                 combos.append(Combo(card_id=card_model.id, combo_card_id=part["id"]))
 

@@ -1,24 +1,26 @@
 import asyncio
+import contextlib
+import logging
 
-import asyncpg
 from asyncpg import Pool
+from asyncpg.exceptions import UndefinedObjectError
+
+logger = logging.getLogger(__name__)
 
 
 async def delete_indexes(pool: Pool) -> None:
-    print("Deleting indexes...")
-    try:
+    logger.info("Deleting indexes...")
+    with contextlib.suppress(UndefinedObjectError):
         await asyncio.gather(
             pool.execute("drop index rule_multi_index"),
             pool.execute("drop index card_index_id_name_date_rule_id"),
             pool.execute("drop index distinct_cards_ix"),
             return_exceptions=False,
         )
-    except asyncpg.exceptions.UndefinedObjectError:
-        pass
 
 
 async def add_indexes(pool: Pool) -> None:
-    rule_index = """    
+    rule_index = """
                 create index rule_multi_index
                     on rule (
                              id,

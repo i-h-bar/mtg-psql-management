@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from models.artists import Artist, MISSING_ID_ID, MISSING_ARTIST
+from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
 from models.card_info import CardInfo
 from models.cards import Card
 from models.combos import Combo
@@ -13,7 +13,7 @@ from models.rules import Rule
 from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.normalise import normalise
-from utils.single_faced import rule_cache, legality_cache, illustration_cache
+from utils.single_faced import illustration_cache, legality_cache, rule_cache
 
 
 def produce_side(
@@ -60,18 +60,12 @@ def produce_side(
     if not side.get("illustration_id") and not card.get("illustration_id"):
         illustration = None
 
-    elif not (
-        illustration := illustration_cache.get(
-            side.get("illustration_id") or card["illustration_id"]
-        )
-    ):
+    elif not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
         illustration = Illustration(
             id=side.get("illustration_id") or card["illustration_id"],
             scryfall_url=image_uris["art_crop"],
         )
-        illustration_cache[side.get("illustration_id") or card["illustration_id"]] = (
-            illustration
-        )
+        illustration_cache[side.get("illustration_id") or card["illustration_id"]] = illustration
 
     card_model = Card(
         id=side_id,
@@ -97,9 +91,7 @@ def produce_side(
     if parts := card.get("all_parts"):
         for part in parts:
             if part["component"] == "token":
-                related_tokens.append(
-                    RelatedToken(token_id=part["id"], card_id=card_model.id)
-                )
+                related_tokens.append(RelatedToken(token_id=part["id"], card_id=card_model.id))
             elif part["component"] == "combo_piece":
                 combos.append(Combo(card_id=card_model.id, combo_card_id=part["id"]))
 
@@ -116,9 +108,7 @@ def produce_side(
     )
 
 
-def produce_dual_faced_card(
-    card: dict, front: dict, back: dict
-) -> tuple[CardInfo, CardInfo] | None:
+def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo] | None:
     back_id = str(uuid.uuid4())
 
     if not (legality := legality_cache.get(card["name"])):

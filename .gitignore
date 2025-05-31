@@ -24,3 +24,4 @@ unique-artwork*.json
 todo.txt
 images/*
 illustrations/*
+poc.py

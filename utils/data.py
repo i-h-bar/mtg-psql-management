@@ -1,8 +1,9 @@
 import json
+import logging
 import os
 import re
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import aiofiles
 import aiohttp
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
+logger = logging.getLogger(__name__)
 file_regex = re.compile(r"default-cards-(\d+)\.json")
 
 
@@ -20,7 +21,7 @@ def look_for_data_file() -> str | None:
         if match := file_regex.match(file.name):
             date = datetime.strptime(match.group(1), "%Y%m%d%H%M%S")
             if date < (datetime.now() - timedelta(days=6, hours=23)):
-                print(f"Deleting stale card data: {file.name}")
+                logger.info(f"Deleting stale card data: {file.name}")
                 file.unlink()
             else:
                 return_file = file
@@ -34,7 +35,7 @@ async def load_data_file(data_file: str | Path) -> list[dict]:
 
 
 async def download_scryfall_data() -> list[dict] | None:
-    print("Downloading from Scryfall")
+    logger.info("Downloading from Scryfall")
     async with aiohttp.ClientSession() as session:
         response = await session.get("https://api.scryfall.com/bulk-data")
         bulk_data_info = await response.json()
@@ -54,14 +55,16 @@ async def download_scryfall_data() -> list[dict] | None:
 
                 return data
 
+        return None
+
 
 async def load_scryfall_data() -> list[dict] | None:
     if data_file := os.getenv("FILE"):
-        print("Found file specified by environment variables.")
+        logger.info("Found file specified by environment variables.")
         return await load_data_file(data_file)
 
     if (data_file := look_for_data_file()) and os.getenv("DEV"):
-        print("Found cached data from previous download less than a week old.")
+        logger.info("Found cached data from previous download less than a week old.")
         return await load_data_file(data_file)
 
     return await download_scryfall_data()

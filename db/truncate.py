@@ -1,8 +1,11 @@
+import logging
+
 from asyncpg import Pool
 
+logger = logging.getLogger(__name__)
 
 async def truncate_db(pool: Pool) -> None:
-    print("Truncating current database...")
+    logging.info("Truncating current database...")
     await pool.execute("truncate table related_token restart identity cascade")
     await pool.execute("truncate table combo restart identity cascade")
     await pool.execute("truncate table card restart identity cascade")
