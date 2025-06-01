@@ -4,6 +4,7 @@ from asyncpg import Pool
 
 logger = logging.getLogger(__name__)
 
+
 async def truncate_db(pool: Pool) -> None:
     logging.info("Truncating current database...")
     await pool.execute("truncate table related_token restart identity cascade")

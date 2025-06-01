@@ -14,6 +14,7 @@ from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.normalise import normalise
 from utils.single_faced import illustration_cache, legality_cache, rule_cache
+from utils.types import JSONType
 
 
 def produce_side(
@@ -108,7 +109,9 @@ def produce_side(
     )
 
 
-def produce_dual_faced_card(card: dict, front: dict, back: dict) -> tuple[CardInfo, CardInfo] | None:
+def produce_dual_faced_card(
+    card: dict[str, JSONType], front: dict[str, JSONType], back: dict[str, JSONType]
+) -> tuple[CardInfo, CardInfo] | None:
     back_id = str(uuid.uuid4())
 
     if not (legality := legality_cache.get(card["name"])):

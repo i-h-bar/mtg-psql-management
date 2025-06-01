@@ -9,6 +9,7 @@ from db.queries import CREATE_ARTIST_MV, CREATE_SET_MV
 
 logger = logging.getLogger(__name__)
 
+
 async def create_mv_distinct(pool: Pool) -> None:
     await pool.execute(
         """

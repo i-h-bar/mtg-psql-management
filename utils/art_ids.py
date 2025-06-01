@@ -16,11 +16,10 @@ def parse_art_id(scryfall_url: str | None) -> str | None:
         return None
 
     match = art_id_regex.match(scryfall_url)
-
-    try:
-        image_id = match.group(3)
-    except AttributeError:
+    if not match:
         return None
+
+    image_id = match.group(3)
 
     side = match.group(2)
     if side == "front":

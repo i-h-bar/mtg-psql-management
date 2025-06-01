@@ -13,13 +13,14 @@ from models.rules import Rule
 from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.normalise import normalise
+from utils.types import JSONType
 
 rule_cache: dict[str, Rule] = {}
 legality_cache: dict[str, Legality] = {}
 illustration_cache: dict[str, Illustration] = {}
 
 
-def produce_card(card: dict) -> CardInfo | None:
+def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
     if image_id := parse_art_id(card["image_uris"]["png"]):
         image = Image(id=image_id, scryfall_url=card["image_uris"]["png"])
     else:

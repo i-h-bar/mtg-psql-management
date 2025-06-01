@@ -19,4 +19,4 @@ class Card(BaseModel):
     legality_id: str
     rule_id: str
     set_id: str
-    backside_id: str = None
+    backside_id: str | None = None

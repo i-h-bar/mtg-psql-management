@@ -27,7 +27,7 @@ image_id, illustration_id, legality_id, rule_id, set_id, backside_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) ON CONFLICT DO NOTHING
 """
 
-INSERT_RELATED_TOKEN = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING" # noqa: S105
+INSERT_RELATED_TOKEN = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"  # noqa: S105
 
 INSERT_COMBO = "INSERT INTO combo (id, card_id, combo_card_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
 
