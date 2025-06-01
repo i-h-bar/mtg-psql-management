@@ -88,3 +88,17 @@ select = [
     "W",
     "RUF"
 ]
+
+[tool.ty.src]
+root = "./src"
+
+[tool.coverage.run]
+omit = ["*/site-packages/*", "tests/*"]
+command_line = "-m pytest tests"
+source = ["./src"]
+skip_empty = true
+
+[tool.coverage.report]
+include = ["src/*"]
+skip_empty = true
+show_missing = true
