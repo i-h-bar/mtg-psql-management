@@ -39,7 +39,7 @@ async def main() -> None:
         try:
             card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;") or [])
         except asyncpg.exceptions.UndefinedTableError:
-            async with aiofiles.open("sql/create_tables.sql", encoding="utf-8") as file:
+            async with aiofiles.open("../sql/create_tables.sql", encoding="utf-8") as file:
                 with contextlib.suppress(DuplicateObjectError, DuplicateTableError):
                     await pool.execute(await file.read())
 
@@ -86,7 +86,7 @@ async def main() -> None:
 
             await download_missing_card_images(pool)
             await download_missing_illustrations(pool)
-            logger.info(f"Card images can be found: {Path('../mtg_cards/').absolute()!s}")
+            logger.info(f"Card images can be found: {Path('../../mtg_cards/').absolute()!s}")
 
         else:
             logger.info("DB is up to date.")

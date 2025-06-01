@@ -5,7 +5,7 @@ from asyncpg import Pool
 from asyncpg.exceptions import DuplicateTableError
 from tqdm import tqdm
 
-from db.queries import CREATE_ARTIST_MV, CREATE_SET_MV
+from src.db.queries import CREATE_ARTIST_MV, CREATE_SET_MV
 
 logger = logging.getLogger(__name__)
 

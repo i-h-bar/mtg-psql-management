@@ -1,7 +1,7 @@
 from asyncpg import Pool
 from tqdm import tqdm
 
-from db.queries import (
+from src.db.queries import (
     INSERT_ARTIST,
     INSERT_CARD,
     INSERT_ILLUSTRATION,
@@ -10,10 +10,10 @@ from db.queries import (
     INSERT_RULE,
     INSERT_SET,
 )
-from models.card_info import CardInfo
-from models.post_inserts import combo_relations, token_relations
-from utils.card_cache import artist_cache, illustration_cache
-from utils.parse import parse_card
+from src.models.card_info import CardInfo
+from src.models.post_inserts import combo_relations, token_relations
+from src.utils.card_cache import artist_cache, illustration_cache
+from src.utils.parse import parse_card
 
 
 async def _insert_card(card_info: CardInfo, pool: Pool) -> None:

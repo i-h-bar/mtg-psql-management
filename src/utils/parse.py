@@ -1,6 +1,6 @@
-from models.card_info import CardInfo
-from utils.dual_faced import produce_dual_faced_card
-from utils.single_faced import produce_card
+from src.models.card_info import CardInfo
+from src.utils.dual_faced import produce_dual_faced_card
+from src.utils.single_faced import produce_card
 
 
 def parse_card(card: dict[str, str | int | list]) -> tuple[CardInfo, ...] | None:
