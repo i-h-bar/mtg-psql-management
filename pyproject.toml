@@ -96,8 +96,6 @@ select = [
     "RUF"
 ]
 
-[tool.ty.src]
-root = "./src"
 
 [tool.coverage.run]
 omit = ["*/site-packages/*", "tests/*"]
