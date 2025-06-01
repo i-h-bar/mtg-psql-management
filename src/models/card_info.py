@@ -1,14 +1,14 @@
 from pydantic import BaseModel, Field
 
-from src.models.artists import Artist
-from src.models.cards import Card
-from src.models.combos import Combo
-from src.models.illustrations import Illustration
-from src.models.images import Image
-from src.models.legalities import Legality
-from src.models.related_tokens import RelatedToken
-from src.models.rules import Rule
-from src.models.sets import Set
+from models.artists import Artist
+from models.cards import Card
+from models.combos import Combo
+from models.illustrations import Illustration
+from models.images import Image
+from models.legalities import Legality
+from models.related_tokens import RelatedToken
+from models.rules import Rule
+from models.sets import Set
 
 
 class CardInfo(BaseModel):

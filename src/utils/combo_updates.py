@@ -3,8 +3,8 @@ import asyncio
 from asyncpg import Pool
 from tqdm import tqdm
 
-from src.db.post_bulk_inserts import insert_combo
-from src.models.combos import Combo
+from db.post_bulk_inserts import insert_combo
+from models.combos import Combo
 
 
 async def update_combos(data: tuple[dict, ...], pool: Pool) -> None:

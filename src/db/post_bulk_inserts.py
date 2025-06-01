@@ -5,10 +5,10 @@ from asyncpg import Pool
 from asyncpg.exceptions import ForeignKeyViolationError
 from tqdm import tqdm
 
-from src.db.queries import INSERT_COMBO, INSERT_RELATED_TOKEN
-from src.models.combos import Combo
-from src.models.post_inserts import combo_relations, token_relations
-from src.models.related_tokens import RelatedToken
+from db.queries import INSERT_COMBO, INSERT_RELATED_TOKEN
+from models.combos import Combo
+from models.post_inserts import combo_relations, token_relations
+from models.related_tokens import RelatedToken
 
 
 async def insert_relation(related_token: RelatedToken, pbar: tqdm, pool: Pool) -> None:
