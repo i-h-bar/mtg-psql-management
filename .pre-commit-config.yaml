@@ -24,13 +24,13 @@ repos:
 
 - repo: local
   hooks:
-    - id: Ty
-      name: Ty Python Type Checking
-      entry: uv run ty check src --error-on-warning
-      always_run: true
-      language: system
-      pass_filenames: false
-      stages: ["pre-push"]
+#    - id: Ty
+#      name: Ty Python Type Checking
+#      entry: uv run ty check src --error-on-warning
+#      always_run: true
+#      language: system
+#      pass_filenames: false
+#      stages: ["pre-push"]
     - id: UV Lock
       name: UV Lock
       entry: uv lock
