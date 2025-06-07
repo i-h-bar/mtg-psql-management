@@ -40,10 +40,10 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
 
 async def download_missing_card_images(pool: Pool) -> None:
     with contextlib.suppress(FileExistsError):
-        Path("../mtg_cards/images").mkdir(parents=True)
+        Path("../../mtg_cards/images").mkdir(parents=True)
 
     all_urls = await pool.fetch("SELECT id, scryfall_url from image")
-    all_urls = [record for record in all_urls if not Path(f"../mtg_cards/images/{record['id']}.png").exists()]
+    all_urls = [record for record in all_urls if not Path(f"../../mtg_cards/images/{record['id']}.png").exists()]
 
     with tqdm(total=len(all_urls)) as pbar:
         pbar.set_description("Fetching missing card images")
@@ -51,15 +51,17 @@ async def download_missing_card_images(pool: Pool) -> None:
 
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
-            await asyncio.gather(*(fetch_image(record, session, pbar, "../mtg_cards/images/") for record in all_urls))
+            await asyncio.gather(
+                *(fetch_image(record, session, pbar, "../../mtg_cards/images/") for record in all_urls)
+            )
 
 
 async def download_missing_illustrations(pool: Pool) -> None:
     with contextlib.suppress(FileExistsError):
-        Path("../mtg_cards/illustrations").mkdir(parents=True)
+        Path("../../mtg_cards/illustrations").mkdir(parents=True)
 
     all_urls = await pool.fetch("SELECT id, scryfall_url from illustration")
-    all_urls = [record for record in all_urls if not Path(f"../mtg_cards/illustrations/{record['id']}.png").exists()]
+    all_urls = [record for record in all_urls if not Path(f"../../mtg_cards/illustrations/{record['id']}.png").exists()]
 
     with tqdm(total=len(all_urls)) as pbar:
         pbar.set_description("Fetching missing illustrations")
@@ -68,5 +70,5 @@ async def download_missing_illustrations(pool: Pool) -> None:
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
             await asyncio.gather(
-                *(fetch_image(record, session, pbar, "../mtg_cards/illustrations/") for record in all_urls)
+                *(fetch_image(record, session, pbar, "../../mtg_cards/illustrations/") for record in all_urls)
             )

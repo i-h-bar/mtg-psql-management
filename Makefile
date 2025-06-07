@@ -13,3 +13,6 @@ test:
 lint:
 	@uv run ruff check
 	@uv run ty check app
+
+run:
+	@cd src; uv run main.py
