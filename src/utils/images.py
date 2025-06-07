@@ -72,3 +72,9 @@ async def download_missing_illustrations(pool: Pool) -> None:
             await asyncio.gather(
                 *(fetch_image(record, session, pbar, "../../mtg_cards/illustrations/") for record in all_urls)
             )
+
+
+async def download_missing_images(pool: Pool) -> None:
+    await download_missing_card_images(pool)
+    await download_missing_illustrations(pool)
+    logger.info(f"Card images can be found: {Path('../../mtg_cards/').absolute()!s}")
