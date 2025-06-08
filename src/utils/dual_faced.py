@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 
 from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist

@@ -1,5 +1,4 @@
 import re
-from uuid import UUID
 
 from utils.maths import increment_uuid
 
