@@ -1,1 +1,1 @@
-INSERT = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
+INSERT = "INSERT INTO related_token (id, card_id, token_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;"
