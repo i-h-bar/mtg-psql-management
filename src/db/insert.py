@@ -7,15 +7,7 @@ from db.delete import delete_index_and_mv
 from db.index import add_indexes
 from db.materialized_view import create_mv_distinct, create_mv_for_artist, create_mv_for_set
 from db.post_bulk_inserts import insert_combos, insert_token_relations
-from db.queries import (
-    INSERT_ARTIST,
-    INSERT_CARD,
-    INSERT_ILLUSTRATION,
-    INSERT_IMAGE,
-    INSERT_LEGALITY,
-    INSERT_RULE,
-    INSERT_SET,
-)
+from db import queries
 from models.card_info import CardInfo
 from models.post_inserts import combo_relations, token_relations
 from utils.card_cache import artist_cache, illustration_cache
@@ -27,20 +19,20 @@ from utils.parse import parse_card
 async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
     artist = card_info.artist
     if artist.id not in artist_cache:
-        await pool.execute(INSERT_ARTIST, artist.id, artist.name, artist.normalised_name)
+        await pool.execute(queries.artist.INSERT, artist.id, artist.name, artist.normalised_name)
         artist_cache.add(artist.id)
 
     illustration = card_info.illustration
     if illustration and illustration.id not in illustration_cache:
-        await pool.execute(INSERT_ILLUSTRATION, illustration.id, illustration.scryfall_url)
+        await pool.execute(queries.illustration.INSERT, illustration.id, illustration.scryfall_url)
         illustration_cache.add(illustration.id)
 
     image = card_info.image
-    await pool.execute(INSERT_IMAGE, image.id, image.scryfall_url)
+    await pool.execute(queries.image.INSERT, image.id, image.scryfall_url)
 
     legality = card_info.legality
     await pool.execute(
-        INSERT_LEGALITY,
+        queries.legality.INSERT,
         legality.id,
         legality.alchemy,
         legality.brawl,
@@ -69,7 +61,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     rule = card_info.rule
     await pool.execute(
-        INSERT_RULE,
+        queries.rule.INSERT,
         rule.id,
         rule.colour_identity,
         rule.mana_cost,
@@ -87,11 +79,11 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
     )
 
     set_ = card_info.set
-    await pool.execute(INSERT_SET, set_.id, set_.name, set_.normalised_name, set_.abbreviation)
+    await pool.execute(queries.sets.INSERT, set_.id, set_.name, set_.normalised_name, set_.abbreviation)
 
     card = card_info.card
     await pool.execute(
-        INSERT_CARD,
+        queries.card.INSERT,
         card.id,
         card.oracle_id,
         card.name,

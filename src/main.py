@@ -23,13 +23,10 @@ async def main() -> None:
         sys.exit(1)
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
-        try:
-            card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;") or [])
-        except asyncpg.exceptions.UndefinedTableError:
-            await create_tables(pool)
-            card_ids = set()
+        await create_tables(pool)
+        card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;") or [])
 
-        data = tuple(
+        missing_data = tuple(
             card
             for card in data
             if card["id"] not in card_ids
@@ -37,8 +34,8 @@ async def main() -> None:
             and card.get("image_uris", {}).get("png") != "https://errors.scryfall.com/soon.jpg"
         )
 
-        if data:
-            await insert_missing_data(data, pool)
+        if missing_data:
+            await insert_missing_data(missing_data, pool)
         else:
             logger.info("DB is up to date.")
 

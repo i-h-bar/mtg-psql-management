@@ -8,7 +8,7 @@ create table set
 
 create table image
 (
-    id  uuid primary key,
+    id           uuid primary key,
     scryfall_url text
 );
 
@@ -18,6 +18,7 @@ create table illustration
     id           uuid primary key,
     scryfall_url text
 );
+
 
 create table legality
 (
@@ -103,7 +104,19 @@ create table related_token
 
 create table combo
 (
-    id       uuid primary key,
-    card_id  uuid references card (id),
+    id            uuid primary key,
+    card_id       uuid references card (id),
     combo_card_id uuid references card (id)
+);
+
+create table price
+(
+    id         uuid primary key,
+    card_id    uuid references card (id),
+    usd        decimal(10, 2),
+    usd_foil   decimal(10, 2),
+    usd_etched decimal(10, 2),
+    euro       decimal(10, 2),
+    euro_foil  decimal(10, 2),
+    tix        decimal(10, 2)
 );
