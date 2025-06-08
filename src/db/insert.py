@@ -32,7 +32,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     legality = card_info.legality
     await pool.execute(
-        queries.legality.INSERT,
+        queries.legality.UPSERT,
         legality.id,
         legality.alchemy,
         legality.brawl,
@@ -61,7 +61,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     rule = card_info.rule
     await pool.execute(
-        queries.rule.INSERT,
+        queries.rule.UPSERT,
         rule.id,
         rule.colour_identity,
         rule.mana_cost,
