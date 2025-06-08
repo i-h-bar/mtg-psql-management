@@ -3,11 +3,11 @@ import asyncio
 from asyncpg import Pool
 from tqdm import tqdm
 
+from db import queries
 from db.delete import delete_index_and_mv
 from db.index import add_indexes
 from db.materialized_view import create_mv_distinct, create_mv_for_artist, create_mv_for_set
 from db.post_bulk_inserts import insert_combos, insert_token_relations
-from db import queries
 from models.card_info import CardInfo
 from models.post_inserts import combo_relations, token_relations
 from utils.card_cache import artist_cache, illustration_cache

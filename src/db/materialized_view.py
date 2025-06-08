@@ -5,7 +5,7 @@ from asyncpg import Pool
 from asyncpg.exceptions import DuplicateTableError
 from tqdm import tqdm
 
-from db.queries.materialised_views import sets, artists, distinct_card
+from db.queries.materialised_views import artists, distinct_card, sets
 
 logger = logging.getLogger(__name__)
 
