@@ -13,16 +13,17 @@ from models.rules import Rule
 from models.sets import Set
 from utils.art_ids import parse_art_id
 from utils.custom_types import JSONType
+from utils.maths import increment_uuid
 from utils.normalise import normalise
-from utils.single_faced import illustration_cache, legality_cache, rule_cache
+from utils.single_faced import illustration_cache
 
 
 def produce_side(
     card: dict,
     side: dict,
     side_id: str,
+    side_oracle_id: str,
     reverse_side_id: str,
-    legality: Legality,
     set_: Set,
 ) -> CardInfo | None:
     image_uris = side.get("image_uris") or card.get("image_uris")
@@ -39,24 +40,28 @@ def produce_side(
         normalised_name=normalise(artist_name),
     )
 
-    if not (rule := rule_cache.get(side["name"])):
-        rule = Rule(
-            id=str(uuid.uuid4()),
-            colour_identity=card["color_identity"],
-            mana_cost=side.get("mana_cost"),
-            cmc=card.get("cmc", 0.0),
-            power=side.get("power"),
-            toughness=side.get("toughness"),
-            loyalty=side.get("loyalty"),
-            defence=side.get("defense"),
-            type_line=side.get("type_line"),
-            oracle_text=side.get("oracle_text"),
-            colours=card.get("colors", []),
-            keywords=card.get("keywords", []),
-            produced_mana=side.get("produced_mana"),
-            rulings_url=card.get("rulings_uri"),
-        )
-        rule_cache[side["name"]] = rule
+    legality = Legality(
+        id=side_oracle_id,
+        game_changer=card.get("game_changer"),
+        **card["legalities"],
+    )
+
+    rule = Rule(
+        id=side_oracle_id,
+        colour_identity=card["color_identity"],
+        mana_cost=side.get("mana_cost"),
+        cmc=card.get("cmc", 0.0),
+        power=side.get("power"),
+        toughness=side.get("toughness"),
+        loyalty=side.get("loyalty"),
+        defence=side.get("defense"),
+        type_line=side.get("type_line"),
+        oracle_text=side.get("oracle_text"),
+        colours=card.get("colors", []),
+        keywords=card.get("keywords", []),
+        produced_mana=side.get("produced_mana"),
+        rulings_url=card.get("rulings_uri"),
+    )
 
     if not side.get("illustration_id") and not card.get("illustration_id"):
         illustration = None
@@ -70,7 +75,7 @@ def produce_side(
 
     card_model = Card(
         id=side_id,
-        oracle_id=card.get("oracle_id", str(uuid.uuid4())),
+        oracle_id=side_oracle_id,
         name=side["name"],
         normalised_name=normalise(side["name"]),
         scryfall_url=card["scryfall_uri"],
@@ -112,15 +117,9 @@ def produce_side(
 def produce_dual_faced_card(
     card: dict[str, JSONType], front: dict[str, JSONType], back: dict[str, JSONType]
 ) -> tuple[CardInfo, CardInfo] | None:
-    back_id = str(uuid.uuid4())
-
-    if not (legality := legality_cache.get(card["name"])):
-        legality = Legality(
-            id=str(uuid.uuid4()),
-            game_changer=card.get("game_changer"),
-            **card["legalities"],
-        )
-        legality_cache[card["name"]] = legality
+    back_id = increment_uuid(card["id"])
+    front_oracle_id = front.get("oracle_id") or card.get("oracle_id")
+    back_oracle_id = increment_uuid(front_oracle_id)
 
     set_ = Set(
         id=card["set_id"],
@@ -129,11 +128,11 @@ def produce_dual_faced_card(
         abbreviation=card["set"],
     )
 
-    front = produce_side(card, front, card["id"], back_id, legality, set_)
+    front = produce_side(card, front, card["id"], front_oracle_id, back_id, set_)
     if not front:
         return None
 
-    back = produce_side(card, back, back_id, front.card.id, legality, set_)
+    back = produce_side(card, back, back_id, back_oracle_id, front.card.id, set_)
     if not back:
         return None
 

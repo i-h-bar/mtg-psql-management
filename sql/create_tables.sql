@@ -19,10 +19,35 @@ create table illustration
     scryfall_url text
 );
 
+create table artist
+(
+    id              uuid primary key,
+    name            text,
+    normalised_name text
+);
+
+create table card
+(
+    id              uuid primary key,
+    oracle_id       uuid,
+    name            text,
+    normalised_name text,
+    scryfall_url    text,
+    flavour_text    text,
+    release_date    date,
+    reserved        bool,
+    rarity          text,
+    artist_id       uuid references artist (id),
+    image_id        uuid references image (id),
+    illustration_id uuid references illustration (id),
+    set_id          uuid references set (id),
+    backside_id     uuid
+);
+
 
 create table legality
 (
-    id              uuid primary key,
+    id              uuid primary key references card(oracle_id),
     alchemy         text,
     brawl           text,
     commander       text,
@@ -48,9 +73,10 @@ create table legality
     game_changer    bool
 );
 
+
 create table rule
 (
-    id              uuid primary key,
+    id              uuid primary key references card(oracle_id),
     colour_identity char(1)[],
     mana_cost       text,
     cmc             integer,
@@ -65,34 +91,6 @@ create table rule
     produced_mana   char(1)[],
     rulings_url     text
 );
-
-create table artist
-(
-    id              uuid primary key,
-    name            text,
-    normalised_name text
-);
-
-create table card
-(
-    id              uuid primary key,
-    oracle_id       uuid,
-    name            text,
-    normalised_name text,
-    scryfall_url    text,
-    flavour_text    text,
-    release_date    date,
-    reserved        bool,
-    rarity          text,
-    artist_id       uuid references artist (id),
-    image_id        uuid references image (id),
-    illustration_id uuid references illustration (id),
-    legality_id     uuid references legality (id),
-    rule_id         uuid references rule (id),
-    set_id          uuid references set (id),
-    backside_id     uuid
-);
-
 
 create table related_token
 (
@@ -111,12 +109,13 @@ create table combo
 
 create table price
 (
-    id         uuid primary key,
-    card_id    uuid references card (id),
-    usd        decimal(10, 2),
-    usd_foil   decimal(10, 2),
-    usd_etched decimal(10, 2),
-    euro       decimal(10, 2),
-    euro_foil  decimal(10, 2),
-    tix        decimal(10, 2)
+    id           uuid primary key,
+    card_id      uuid references card (id),
+    usd          decimal(10, 2),
+    usd_foil     decimal(10, 2),
+    usd_etched   decimal(10, 2),
+    euro         decimal(10, 2),
+    euro_foil    decimal(10, 2),
+    tix          decimal(10, 2),
+    updated_time date
 );

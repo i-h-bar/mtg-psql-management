@@ -15,8 +15,6 @@ from utils.art_ids import parse_art_id
 from utils.custom_types import JSONType
 from utils.normalise import normalise
 
-rule_cache: dict[str, Rule] = {}
-legality_cache: dict[str, Legality] = {}
 illustration_cache: dict[str, Illustration] = {}
 
 
@@ -32,32 +30,28 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
         normalised_name=normalise(card["artist"] or MISSING_ARTIST),
     )
 
-    if not (rule := rule_cache.get(card["oracle_id"])):
-        rule = Rule(
-            id=str(uuid.uuid4()),
-            colour_identity=card["color_identity"],
-            mana_cost=card["mana_cost"],
-            cmc=card.get("cmc", 0.0),
-            power=card.get("power"),
-            toughness=card.get("toughness"),
-            loyalty=card.get("loyalty"),
-            defence=card.get("defense"),
-            type_line=card["type_line"],
-            oracle_text=card.get("oracle_text"),
-            colours=card.get("colors", []),
-            keywords=card.get("keywords", []),
-            produced_mana=card.get("produced_mana"),
-            rulings_url=card.get("rulings_uri"),
-        )
-        rule_cache[card["oracle_id"]] = rule
+    rule = Rule(
+        id=card["oracle_id"],
+        colour_identity=card["color_identity"],
+        mana_cost=card["mana_cost"],
+        cmc=card.get("cmc", 0.0),
+        power=card.get("power"),
+        toughness=card.get("toughness"),
+        loyalty=card.get("loyalty"),
+        defence=card.get("defense"),
+        type_line=card["type_line"],
+        oracle_text=card.get("oracle_text"),
+        colours=card.get("colors", []),
+        keywords=card.get("keywords", []),
+        produced_mana=card.get("produced_mana"),
+        rulings_url=card.get("rulings_uri"),
+    )
 
-    if not (legality := legality_cache.get(card["oracle_id"])):
-        legality = Legality(
-            id=str(uuid.uuid4()),
-            game_changer=card.get("game_changer"),
-            **card["legalities"],
-        )
-        legality_cache[card["oracle_id"]] = legality
+    legality = Legality(
+        id=card["oracle_id"],
+        game_changer=card.get("game_changer"),
+        **card["legalities"],
+    )
 
     if not card.get("illustration_id"):
         illustration = None
