@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
 from models.card_info import CardInfo
@@ -8,6 +8,7 @@ from models.combos import Combo
 from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
+from models.price import Price
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
@@ -69,7 +70,7 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
 
     card_model = Card(
         id=card["id"],
-        oracle_id=card.get("oracle_id", str(uuid.uuid4())),
+        oracle_id=card["oracle_id"],
         name=card["name"],
         normalised_name=normalise(card["name"]),
         scryfall_url=card["scryfall_uri"],
@@ -80,10 +81,10 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
         artist_id=artist.id,
         image_id=image.id,
         illustration_id=None if not illustration else illustration.id,
-        legality_id=legality.id,
-        rule_id=rule.id,
         set_id=set_.id,
     )
+
+    price = Price.from_card(card)
 
     combos = []
     related_tokens = []
@@ -104,4 +105,5 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
         set=set_,
         related_tokens=related_tokens,
         combos=combos,
+        price=price,
     )

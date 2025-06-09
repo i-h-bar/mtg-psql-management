@@ -4,8 +4,7 @@ from asyncpg import Pool
 from tqdm import tqdm
 
 from db import queries
-from db.delete import delete_index_and_mv
-from db.index import add_indexes
+from db.delete import delete_index_and_mv, truncate_changeable_tables
 from db.materialized_view import create_mv_distinct, create_mv_for_artist, create_mv_for_set
 from db.post_bulk_inserts import insert_combos, insert_token_relations
 from models.card_info import CardInfo
@@ -96,10 +95,21 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
         card.artist_id,
         card.image_id,
         card.illustration_id,
-        card.legality_id,
-        card.rule_id,
         card.set_id,
         card.backside_id,
+    )
+
+    price = card_info.price
+    await pool.execute(
+        queries.price.UPSERT,
+        price.id,
+        price.usd,
+        price.usd_foil,
+        price.usd_etched,
+        price.euro,
+        price.euro_foil,
+        price.tix,
+        price.updated_time,
     )
 
     for related_token in card_info.related_tokens:
@@ -121,8 +131,9 @@ async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
     pbar.update()
 
 
-async def insert_missing_data(data: tuple[dict[str, JSONType], ...], pool: Pool) -> None:
+async def insert_data(data: tuple[dict[str, JSONType], ...], pool: Pool) -> None:
     await delete_index_and_mv(pool)
+    await truncate_changeable_tables(pool)
 
     with tqdm(total=len(data)) as pbar:
         pbar.set_description("Inserting Cards")
@@ -134,7 +145,6 @@ async def insert_missing_data(data: tuple[dict[str, JSONType], ...], pool: Pool)
     await update_combos(data, pool)
 
     await create_mv_distinct(pool)
-    await add_indexes(pool)
 
     all_sets = await pool.fetchval("select array_agg(normalised_name) from set;") or []
     with tqdm(total=len(all_sets)) as pbar:

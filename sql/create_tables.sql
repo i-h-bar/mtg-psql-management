@@ -26,28 +26,10 @@ create table artist
     normalised_name text
 );
 
-create table card
-(
-    id              uuid primary key,
-    oracle_id       uuid,
-    name            text,
-    normalised_name text,
-    scryfall_url    text,
-    flavour_text    text,
-    release_date    date,
-    reserved        bool,
-    rarity          text,
-    artist_id       uuid references artist (id),
-    image_id        uuid references image (id),
-    illustration_id uuid references illustration (id),
-    set_id          uuid references set (id),
-    backside_id     uuid
-);
-
 
 create table legality
 (
-    id              uuid primary key references card(oracle_id),
+    id              uuid primary key,
     alchemy         text,
     brawl           text,
     commander       text,
@@ -76,7 +58,7 @@ create table legality
 
 create table rule
 (
-    id              uuid primary key references card(oracle_id),
+    id              uuid primary key,
     colour_identity char(1)[],
     mana_cost       text,
     cmc             integer,
@@ -91,6 +73,28 @@ create table rule
     produced_mana   char(1)[],
     rulings_url     text
 );
+
+
+create table card
+(
+    id              uuid primary key,
+    oracle_id       uuid,
+    name            text,
+    normalised_name text,
+    scryfall_url    text,
+    flavour_text    text,
+    release_date    date,
+    reserved        bool,
+    rarity          text,
+    artist_id       uuid references artist (id),
+    image_id        uuid references image (id),
+    illustration_id uuid references illustration (id),
+    set_id          uuid references set (id),
+    backside_id     uuid,
+    foreign key (oracle_id) references legality (id),
+    foreign key (oracle_id) references rule (id)
+);
+
 
 create table related_token
 (
@@ -109,8 +113,7 @@ create table combo
 
 create table price
 (
-    id           uuid primary key,
-    card_id      uuid references card (id),
+    id           uuid primary key references card (id),
     usd          decimal(10, 2),
     usd_foil     decimal(10, 2),
     usd_etched   decimal(10, 2),

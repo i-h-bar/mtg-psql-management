@@ -7,7 +7,7 @@ import asyncpg
 from dotenv import load_dotenv
 
 from db.initialiser import create_tables
-from db.insert import insert_missing_data
+from db.insert import insert_data
 from utils.data import load_scryfall_data
 from utils.images import download_missing_images
 
@@ -24,20 +24,15 @@ async def main() -> None:
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
         await create_tables(pool)
-        card_ids = set(await pool.fetchval("select array_agg(cast(id as varchar)) from card;") or [])
 
-        missing_data = tuple(
+        data = tuple(
             card
             for card in data
-            if card["id"] not in card_ids
-            and card.get("set_type") != "memorabilia"
+            if card.get("set_type") != "memorabilia"
             and card.get("image_uris", {}).get("png") != "https://errors.scryfall.com/soon.jpg"
         )
 
-        if missing_data:
-            await insert_missing_data(missing_data, pool)
-        else:
-            logger.info("DB is up to date.")
+        await insert_data(data, pool)
 
         await download_missing_images(pool)
 

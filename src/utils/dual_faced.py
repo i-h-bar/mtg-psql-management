@@ -7,6 +7,7 @@ from models.combos import Combo
 from models.illustrations import Illustration
 from models.images import Image
 from models.legalities import Legality
+from models.price import Price
 from models.related_tokens import RelatedToken
 from models.rules import Rule
 from models.sets import Set
@@ -85,8 +86,6 @@ def produce_side(
         artist_id=artist.id,
         image_id=image.id,
         illustration_id=None if not illustration else illustration.id,
-        legality_id=legality.id,
-        rule_id=rule.id,
         set_id=set_.id,
         backside_id=reverse_side_id,
     )
@@ -110,6 +109,7 @@ def produce_side(
         set=set_,
         related_tokens=related_tokens,
         combos=combos,
+        price=Price.from_card(card),
     )
 
 
