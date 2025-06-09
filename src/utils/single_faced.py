@@ -1,5 +1,4 @@
-import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
 from models.card_info import CardInfo
