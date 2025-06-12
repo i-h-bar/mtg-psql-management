@@ -34,13 +34,19 @@ CREATE = """
 
                    front.release_date           as release_date,
                    artist.name                  as artist,
-                   set.name                     as set_name
+                   set.name                     as set_name,
+
+                   price.usd                  as usd,
+                   price.euro                 as euro,
+                   price.tix                  as tix,
+                   price.updated_time         as updated_time
             from card front
                      left join card back on front.backside_id = back.id
                      left join rule front_rule on front.oracle_id = front_rule.id
                      left join rule back_rule on back.oracle_id = back_rule.id
                      left join set on front.set_id = set.id
                      join artist on front.artist_id = artist.id
+                    left join price on front.id = price.id
 
             where artist.normalised_name = '{normalised_name}';
 """

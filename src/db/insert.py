@@ -136,7 +136,7 @@ async def insert_data(data: tuple[dict[str, JSONType], ...], pool: Pool) -> None
     await truncate_changeable_tables(pool)
 
     with tqdm(total=len(data)) as pbar:
-        pbar.set_description("Inserting Cards")
+        pbar.set_description("Upserting Cards")
         pbar.refresh()
         await asyncio.gather(*(insert_card(card, pbar, pool) for card in data))
 
