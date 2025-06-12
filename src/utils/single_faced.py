@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
+from models.artists import Artist
 from models.card_info import CardInfo
 from models.cards import Card
 from models.combos import Combo
