@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
-from utils.custom_types import JSONType
+if TYPE_CHECKING:
+    from utils.custom_types import JSONType
+
 
 illustration_cache: dict[str, Illustration] = {}
 
