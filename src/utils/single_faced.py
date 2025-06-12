@@ -15,8 +15,6 @@ from utils.art_ids import parse_art_id
 from utils.custom_types import JSONType
 from utils.normalise import normalise
 
-illustration_cache: dict[str, Illustration] = {}
-
 
 def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
     if image_id := parse_art_id(card["image_uris"]["png"]):
@@ -24,12 +22,7 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
     else:
         return None
 
-    artist = Artist(
-        id=card.get("artist_ids", MISSING_ID_ID)[0],
-        name=card["artist"] or MISSING_ARTIST,
-        normalised_name=normalise(card["artist"] or MISSING_ARTIST),
-    )
-
+    artist = Artist.from_card(card)
     rule = Rule(
         id=card["oracle_id"],
         colour_identity=card["color_identity"],
@@ -53,12 +46,7 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
         **card["legalities"],
     )
 
-    if not card.get("illustration_id"):
-        illustration = None
-
-    elif not (illustration := illustration_cache.get(card["illustration_id"])):
-        illustration = Illustration(id=card["illustration_id"], scryfall_url=card["image_uris"]["art_crop"])
-        illustration_cache[card["illustration_id"]] = illustration
+    illustration = Illustration.from_card(card)
 
     set_ = Set(
         id=card["set_id"],
@@ -67,21 +55,7 @@ def produce_card(card: dict[str, JSONType]) -> CardInfo | None:
         abbreviation=card["set"],
     )
 
-    card_model = Card(
-        id=card["id"],
-        oracle_id=card["oracle_id"],
-        name=card["name"],
-        normalised_name=normalise(card["name"]),
-        scryfall_url=card["scryfall_uri"],
-        flavour_text=card.get("flavor_text"),
-        release_date=datetime.strptime(card["released_at"], "%Y-%m-%d"),
-        reserved=card["reserved"],
-        rarity=card["rarity"],
-        artist_id=artist.id,
-        image_id=image.id,
-        illustration_id=None if not illustration else illustration.id,
-        set_id=set_.id,
-    )
+    card_model = Card.from_card(card, artist, image, set_, illustration)
 
     price = Price.from_card(card)
 
