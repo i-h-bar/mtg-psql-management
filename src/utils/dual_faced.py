@@ -4,7 +4,7 @@ from models.artists import MISSING_ARTIST, MISSING_ID_ID, Artist
 from models.card_info import CardInfo
 from models.cards import Card
 from models.combos import Combo
-from models.illustrations import Illustration
+from models.illustrations import Illustration, illustration_cache
 from models.images import Image
 from models.legalities import Legality
 from models.price import Price
@@ -15,7 +15,6 @@ from utils.art_ids import parse_art_id
 from utils.custom_types import JSONType
 from utils.maths import increment_uuid
 from utils.normalise import normalise
-from utils.single_faced import illustration_cache
 
 
 def produce_side(
