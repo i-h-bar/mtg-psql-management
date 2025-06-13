@@ -32,7 +32,7 @@ class Illustration(BaseModel):
         if not side.get("illustration_id") and not card.get("illustration_id"):
             return None
 
-        elif not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
+        if not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
             illustration = Illustration(
                 id=side.get("illustration_id") or card["illustration_id"],
                 scryfall_url=(side.get("image_uris") or card.get("image_uris"))["art_crop"],

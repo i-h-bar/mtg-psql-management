@@ -22,5 +22,4 @@ class Image(BaseModel):
         image_uris = side.get("image_uris") or card.get("image_uris")
         if image_uris and (image_id := parse_art_id(image_uris.get("png"))):
             return cls(id=image_id, scryfall_url=image_uris["png"])
-        else:
-            return None
+        return None

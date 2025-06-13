@@ -12,8 +12,8 @@ test:
 	@uv run coverage report
 
 lint:
-	@uv run ruff check
-	@uv run ty check app
+	@uv run ruff check --fix
+	@uv run ty check src
 
 run:
 	@cd src && uv run main.py
