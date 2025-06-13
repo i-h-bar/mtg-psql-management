@@ -38,3 +38,11 @@ class Legality(BaseModel):
             game_changer=card.get("game_changer"),
             **card["legalities"],
         )
+
+    @classmethod
+    def from_side(cls: type[Self], card_id: str, card: dict[str, JSONType]) -> Self:
+        return cls(
+            id=card_id,
+            game_changer=card.get("game_changer"),
+            **card["legalities"],
+        )

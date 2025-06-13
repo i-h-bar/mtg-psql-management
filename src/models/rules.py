@@ -39,3 +39,22 @@ class Rule(BaseModel):
             produced_mana=card.get("produced_mana"),
             rulings_url=card.get("rulings_uri"),
         )
+
+    @classmethod
+    def from_side(cls: type[Self], card_id: str, side: dict[str, JSONType], card: dict[str, JSONType]) -> Self:
+        return cls(
+            id=card_id,
+            colour_identity=card["color_identity"],
+            mana_cost=side.get("mana_cost"),
+            cmc=card.get("cmc", 0.0),
+            power=side.get("power"),
+            toughness=side.get("toughness"),
+            loyalty=side.get("loyalty"),
+            defence=side.get("defense"),
+            type_line=side.get("type_line"),
+            oracle_text=side.get("oracle_text"),
+            colours=card.get("colors", []),
+            keywords=card.get("keywords", []),
+            produced_mana=side.get("produced_mana"),
+            rulings_url=card.get("rulings_uri"),
+        )

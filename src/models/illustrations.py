@@ -26,3 +26,18 @@ class Illustration(BaseModel):
             return illustration
 
         return illustration
+
+    @classmethod
+    def from_side(cls: type[Self], side: dict[str, JSONType], card: dict[str, JSONType]) -> Self | None:
+        if not side.get("illustration_id") and not card.get("illustration_id"):
+            return None
+
+        elif not (illustration := illustration_cache.get(side.get("illustration_id") or card["illustration_id"])):
+            illustration = Illustration(
+                id=side.get("illustration_id") or card["illustration_id"],
+                scryfall_url=(side.get("image_uris") or card.get("image_uris"))["art_crop"],
+            )
+            illustration_cache[side.get("illustration_id") or card["illustration_id"]] = illustration
+            return illustration
+
+        return illustration

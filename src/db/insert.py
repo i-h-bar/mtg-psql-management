@@ -12,7 +12,6 @@ from models.post_inserts import combo_relations, token_relations
 from utils.card_cache import artist_cache, illustration_cache
 from utils.combo_updates import update_combos
 from utils.custom_types import JSONType
-from utils.parse import parse_card
 
 
 async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
@@ -120,7 +119,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
 
 async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
-    card_infos = parse_card(card)
+    card_infos = CardInfo.parse_card(card)
     if not card_infos:
         pbar.update()
         return
