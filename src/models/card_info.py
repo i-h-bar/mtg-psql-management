@@ -67,7 +67,7 @@ class CardInfo(BaseModel):
         reverse_side_id: str,
         side: dict[str, JSONType],
         card: dict[str, JSONType],
-        set_: Set
+        set_: Set,
     ) -> Self | None:
         if not (image := Image.from_side(side, card)):
             return None
@@ -97,7 +97,7 @@ class CardInfo(BaseModel):
 
     @classmethod
     def produce_sides(
-            cls: type[Self], card: dict[str, JSONType], front: dict[str, JSONType], back: dict[str, JSONType]
+        cls: type[Self], card: dict[str, JSONType], front: dict[str, JSONType], back: dict[str, JSONType]
     ) -> tuple[Self, Self] | None:
         back_id = increment_uuid(card["id"])
         front_oracle_id = front.get("oracle_id") or card.get("oracle_id")
