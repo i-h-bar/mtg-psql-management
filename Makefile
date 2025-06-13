@@ -1,7 +1,8 @@
+.PHONY: run pull
+
 setup_local:
 	@pre-commit install
 	@pre-commit install --hook-type pre-commit --hook-type pre-push
-
 
 start_docker:
 	@sudo systemctl start docker
@@ -15,4 +16,9 @@ lint:
 	@uv run ty check app
 
 run:
-	@cd src; uv run main.py
+	@cd src && uv run main.py
+
+pull:
+	@git pull
+
+cron: pull run
