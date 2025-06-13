@@ -16,7 +16,7 @@ lint:
 	@uv run ty check src
 
 run:
-	@cd src && uv run main.py
+	@uv sync && cd src && uv run main.py
 
 pull:
 	@git pull
