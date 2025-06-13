@@ -15,7 +15,9 @@ async def create_tables(pool: Pool) -> None:
     async with aiofiles.open("../sql/create_tables.sql", encoding="utf-8") as file:
         table_queries = await file.read()
 
-    await asyncio.gather(*(create_table(pool, query) for query in table_queries.replace("\n", "").split(";") if query))
+    for query in table_queries.replace("\n", "").split(";"):
+        if query:
+            await create_table(pool, query)
 
     with contextlib.suppress(DuplicateObjectError, DuplicateTableError):
         await pool.execute("create extension pg_trgm;")
