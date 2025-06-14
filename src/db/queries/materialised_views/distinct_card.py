@@ -36,7 +36,10 @@ CREATE = """
                                              set.name                   as set_name,
 
                                              price.usd                  as usd,
+                                             price.usd_foil             as usd_foil,
+                                             price.usd_etched           as usd_etched,
                                              price.euro                 as euro,
+                                             price.euro_foil            as euro_foil,
                                              price.tix                  as tix,
                                              price.updated_time         as updated_time
         from card front
