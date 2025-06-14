@@ -3,7 +3,6 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta, timezone
-from functools import lru_cache
 from pathlib import Path
 from typing import Self
 
