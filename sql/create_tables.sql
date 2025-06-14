@@ -120,5 +120,5 @@ create table price
     euro         decimal(10, 2),
     euro_foil    decimal(10, 2),
     tix          decimal(10, 2),
-    updated_time date
+    updated_time time with time zone
 );
