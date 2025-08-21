@@ -14,3 +14,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 """
+
+DROP_ALL_TABLES = """
+drop table if exists alembic_version;
+drop table if exists combo;
+drop table if exists price;
+drop table if exists related_token;
+drop table if exists card;
+drop table if exists artist;
+drop table if exists image;
+drop table if exists illustration;
+drop table if exists legality;
+drop table if exists rule;
+drop table if exists set;
+"""
