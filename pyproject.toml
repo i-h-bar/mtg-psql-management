@@ -6,22 +6,22 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "aiofiles>=24.1.0",
-    "aiohttp>=3.11.12",
+    "aiohttp>=3.12.15",
     "asyncpg>=0.30.0",
-    "pydantic>=2.10.6",
-    "python-dotenv>=1.0.1",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
     "tqdm>=4.67.1",
-    "unidecode>=1.3.8",
+    "unidecode>=1.4.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.6",
-    "ty>=0.0.1a8",
-    "coverage (>=7.8.0,<8.0.0)",
-    "pytest (>=8.3.5,<9.0.0)",
-    "pre-commit (>=4.2,<5.0)",
-    "pytest-asyncio (>=0.26.0,<1)",
+    "ruff>=0.12.9",
+    "ty>=0.0.1a19",
+    "coverage (>=7.10.4,<8.0.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "pre-commit (>=4.3,<5.0)",
+    "pytest-asyncio (>=1.1.0,<2)",
 ]
 
 [tool.pytest.ini_options]

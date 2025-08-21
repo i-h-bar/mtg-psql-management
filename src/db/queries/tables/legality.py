@@ -5,7 +5,6 @@ UPSERT = """
           brawl,
           commander,
           duel,
-          explorer,
           future,
           gladiator,
           historic,
@@ -45,13 +44,11 @@ UPSERT = """
                  $20,
                  $21,
                  $22,
-                 $23,
-                 $24)
+                 $23)
          ON CONFLICT(id) DO UPDATE SET alchemy         = EXCLUDED.alchemy,
                                        brawl           = EXCLUDED.brawl,
                                        commander       = EXCLUDED.commander,
                                        duel            = EXCLUDED.duel,
-                                       explorer        = EXCLUDED.explorer,
                                        future          = EXCLUDED.future,
                                        gladiator       = EXCLUDED.gladiator,
                                        historic        = EXCLUDED.historic,

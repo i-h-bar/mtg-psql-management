@@ -17,26 +17,25 @@ from utils.custom_types import JSONType
 async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
     artist = card_info.artist
     if artist.id not in artist_cache:
-        await pool.execute(queries.artist.INSERT, artist.id, artist.name, artist.normalised_name)
+        await pool.execute(queries.tables.artist.INSERT, artist.id, artist.name, artist.normalised_name)
         artist_cache.add(artist.id)
 
     illustration = card_info.illustration
     if illustration and illustration.id not in illustration_cache:
-        await pool.execute(queries.illustration.INSERT, illustration.id, illustration.scryfall_url)
+        await pool.execute(queries.tables.illustration.INSERT, illustration.id, illustration.scryfall_url)
         illustration_cache.add(illustration.id)
 
     image = card_info.image
-    await pool.execute(queries.image.INSERT, image.id, image.scryfall_url)
+    await pool.execute(queries.tables.image.INSERT, image.id, image.scryfall_url)
 
     legality = card_info.legality
     await pool.execute(
-        queries.legality.UPSERT,
+        queries.tables.legality.UPSERT,
         legality.id,
         legality.alchemy,
         legality.brawl,
         legality.commander,
         legality.duel,
-        legality.explorer,
         legality.future,
         legality.gladiator,
         legality.historic,
@@ -59,7 +58,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     rule = card_info.rule
     await pool.execute(
-        queries.rule.UPSERT,
+        queries.tables.rule.UPSERT,
         rule.id,
         rule.colour_identity,
         rule.mana_cost,
@@ -77,11 +76,11 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
     )
 
     set_ = card_info.set
-    await pool.execute(queries.sets.INSERT, set_.id, set_.name, set_.normalised_name, set_.abbreviation)
+    await pool.execute(queries.tables.sets.INSERT, set_.id, set_.name, set_.normalised_name, set_.abbreviation)
 
     card = card_info.card
     await pool.execute(
-        queries.card.INSERT,
+        queries.tables.card.INSERT,
         card.id,
         card.oracle_id,
         card.name,
@@ -100,7 +99,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     price = card_info.price
     await pool.execute(
-        queries.price.UPSERT,
+        queries.tables.price.UPSERT,
         price.id,
         price.usd,
         price.usd_foil,
