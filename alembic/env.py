@@ -8,7 +8,6 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
-from main import main
 
 load_dotenv()
 
@@ -59,4 +58,3 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 run_migrations_online()
-asyncio.run(main())
