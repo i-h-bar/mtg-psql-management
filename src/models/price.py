@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Self
 
 from pydantic import BaseModel
 
 from utils.custom_types import JSONType
+from utils.data import date_cache
 
 
 class Price(BaseModel):
@@ -45,5 +46,5 @@ class Price(BaseModel):
             euro=euro,
             euro_foil=euro_foil,
             tix=tix,
-            updated_time=datetime.now(tz=timezone.utc),
+            updated_time=date_cache.date,
         )

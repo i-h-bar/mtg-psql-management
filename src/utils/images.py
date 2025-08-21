@@ -77,4 +77,4 @@ async def download_missing_illustrations(pool: Pool) -> None:
 async def download_missing_images(pool: Pool) -> None:
     await download_missing_card_images(pool)
     await download_missing_illustrations(pool)
-    logger.info(f"Card images can be found: {Path('../../mtg_cards/').absolute()!s}")
+    logger.info(f"Card images can be found: {Path('../../mtg_cards/').resolve().absolute()!s}")
