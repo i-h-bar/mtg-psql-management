@@ -6,7 +6,6 @@ import sys
 import asyncpg
 from dotenv import load_dotenv
 
-from db.initialiser import create_tables
 from db.insert import insert_data
 from utils.data import load_scryfall_data
 from utils.images import download_missing_images
@@ -23,8 +22,6 @@ async def main() -> None:
         sys.exit(1)
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
-        await create_tables(pool)
-
         data = tuple(
             card
             for card in data

@@ -1,19 +1,23 @@
 import asyncio
 import contextlib
 import logging
+import os
 import sys
 from pathlib import Path
 
 import aiofiles
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from asyncpg import Pool, Record
+from dotenv import load_dotenv
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
+load_dotenv()
 
-async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, directory: str) -> None:
-    proposed_path = f"{directory}{record['id']}.png"
+
+async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, directory: Path) -> None:
+    proposed_path = directory / f"{record['id']}.png"
 
     if not Path(proposed_path).exists():
         try:
@@ -38,12 +42,13 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
     pbar.update()
 
 
-async def download_missing_card_images(pool: Pool) -> None:
+async def download_missing_card_images(pool: Pool, base_dir: Path) -> None:
+    images_dir = base_dir / "images"
     with contextlib.suppress(FileExistsError):
-        Path("../../mtg_cards/images").mkdir(parents=True)
+        images_dir.mkdir(parents=True)
 
     all_urls = await pool.fetch("SELECT id, scryfall_url from image")
-    all_urls = [record for record in all_urls if not Path(f"../../mtg_cards/images/{record['id']}.png").exists()]
+    all_urls = [record for record in all_urls if not (images_dir / f"{record['id']}.png").exists()]
 
     with tqdm(total=len(all_urls)) as pbar:
         pbar.set_description("Fetching missing card images")
@@ -51,17 +56,16 @@ async def download_missing_card_images(pool: Pool) -> None:
 
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
-            await asyncio.gather(
-                *(fetch_image(record, session, pbar, "../../mtg_cards/images/") for record in all_urls)
-            )
+            await asyncio.gather(*(fetch_image(record, session, pbar, images_dir) for record in all_urls))
 
 
-async def download_missing_illustrations(pool: Pool) -> None:
+async def download_missing_illustrations(pool: Pool, base_dir: Path) -> None:
+    illustration_dir = base_dir / "illustrations"
     with contextlib.suppress(FileExistsError):
-        Path("../../mtg_cards/illustrations").mkdir(parents=True)
+        illustration_dir.mkdir(parents=True)
 
     all_urls = await pool.fetch("SELECT id, scryfall_url from illustration")
-    all_urls = [record for record in all_urls if not Path(f"../../mtg_cards/illustrations/{record['id']}.png").exists()]
+    all_urls = [record for record in all_urls if not (illustration_dir / f"{record['id']}.png").exists()]
 
     with tqdm(total=len(all_urls)) as pbar:
         pbar.set_description("Fetching missing illustrations")
@@ -69,12 +73,11 @@ async def download_missing_illustrations(pool: Pool) -> None:
 
         connector = TCPConnector(limit=5)
         async with ClientSession(connector=connector, timeout=ClientTimeout(total=300)) as session:
-            await asyncio.gather(
-                *(fetch_image(record, session, pbar, "../../mtg_cards/illustrations/") for record in all_urls)
-            )
+            await asyncio.gather(*(fetch_image(record, session, pbar, illustration_dir) for record in all_urls))
 
 
 async def download_missing_images(pool: Pool) -> None:
-    await download_missing_card_images(pool)
-    await download_missing_illustrations(pool)
-    logger.info(f"Card images can be found: {Path('../../mtg_cards/').resolve().absolute()!s}")
+    base_dir = Path(os.getenv("IMAGES_DIR"))
+    await download_missing_card_images(pool, base_dir)
+    await download_missing_illustrations(pool, base_dir)
+    logger.info(f"Card images can be found: {base_dir.resolve().absolute()!s}")

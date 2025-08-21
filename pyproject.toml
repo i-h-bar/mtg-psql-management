@@ -12,6 +12,7 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "tqdm>=4.67.1",
     "unidecode>=1.4.0",
+    "alembic (>=1.16.4,<2.0.0)",
 ]
 
 [dependency-groups]
