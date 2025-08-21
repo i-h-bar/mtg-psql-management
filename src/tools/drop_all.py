@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from db.materialized_view import slow_drop_all_mv
 from db.queries.materialised_views.drop_all import DROP_MAT_VIEWS
-from db.queries.tables.drop_all import DROP_TABLES, DROP_ALL_TABLES
+from db.queries.tables.drop_all import DROP_ALL_TABLES, DROP_TABLES
 
 load_dotenv()
 
