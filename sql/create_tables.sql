@@ -34,7 +34,6 @@ create table legality
     brawl           text,
     commander       text,
     duel            text,
-    explorer        text,
     future          text,
     gladiator       text,
     historic        text,
