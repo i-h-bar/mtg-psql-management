@@ -11,7 +11,7 @@ class Legality(BaseModel):
     brawl: str
     commander: str
     duel: str
-    explorer: str
+    explorer: str | None = None
     future: str
     gladiator: str
     historic: str
