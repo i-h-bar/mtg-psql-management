@@ -6,24 +6,65 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "aiofiles>=24.1.0",
-    "aiohttp>=3.11.12",
+    "aiohttp>=3.12.15",
     "asyncpg>=0.30.0",
-    "pydantic>=2.10.6",
-    "python-dotenv>=1.0.1",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
     "tqdm>=4.67.1",
-    "unidecode>=1.3.8",
+    "unidecode>=1.4.0",
+    "alembic (>=1.16.4,<2.0.0)",
 ]
+
+[tool.uv]
+package = true
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.6",
-    "ty>=0.0.1a7"
+    "ruff>=0.12.9",
+    "ty>=0.0.1a19",
+    "coverage (>=7.10.4,<8.0.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "pre-commit (>=4.3,<5.0)",
+    "pytest-asyncio (>=1.1.0,<2)",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+asyncio_default_fixture_loop_scope = "function"
 
 
 [tool.ruff]
 line-length = 120
 target-version = "py313"
+include = ["src/**/*.py"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
@@ -55,3 +96,15 @@ select = [
     "W",
     "RUF"
 ]
+
+
+[tool.coverage.run]
+omit = ["*/site-packages/*", "tests/*"]
+command_line = "-m pytest tests"
+source = ["./src"]
+skip_empty = true
+
+[tool.coverage.report]
+include = ["src/*"]
+skip_empty = true
+show_missing = true
