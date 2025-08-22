@@ -1,0 +1,19 @@
+name: migration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cron:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update uv
+        run: uv self update
+
+      - name: Run Migration
+        run: uv run alembic upgrade head
+        env:
+          PSQL_URI: ${{ secrets.PSQL_URI }}
