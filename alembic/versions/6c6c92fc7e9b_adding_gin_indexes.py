@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.execute("SET pg_trgm.similarity_threshold = 0.5;")
+    op.execute("ALTER DATABASE mtg SET pg_trgm.similarity_threshold = 0.5;")
     op.execute("CREATE INDEX idx_gin_card_normalised_name ON card USING gin (normalised_name gin_trgm_ops);")
     op.execute("CREATE INDEX idx_gin_set_normalised_name ON set USING gin (normalised_name gin_trgm_ops);")
     op.execute("CREATE INDEX idx_gin_artist_normalised_name ON artist USING gin (normalised_name gin_trgm_ops);")
@@ -29,7 +29,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.execute("SET pg_trgm.similarity_threshold = 0.3;")
+    op.execute("ALTER DATABASE mtg RESET pg_trgm.similarity_threshold;")
     op.execute("DROP INDEX idx_gin_card_normalised_name;")
     op.execute("DROP INDEX idx_gin_set_normalised_name;")
     op.execute("DROP INDEX idx_gin_artist_normalised_name;")
