@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from db import queries
 from models.combos import Combo
-from models.post_inserts import combo_relations, token_relations
+from models.post_inserts import token_relations
 from models.related_tokens import RelatedToken
 
 

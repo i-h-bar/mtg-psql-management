@@ -2,7 +2,6 @@ import asyncio
 
 from asyncpg import Pool
 
-from db.materialized_view import drop_all_mv
 from db.queries.tables import combo, related_token
 
 
