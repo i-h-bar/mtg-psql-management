@@ -4,13 +4,12 @@ from asyncpg import Pool
 from tqdm import tqdm
 
 from db import queries
-from db.delete import delete_index_and_mv, truncate_changeable_tables
-from db.materialized_view import create_mv_distinct, create_mv_for_artist, create_mv_for_set
-from db.post_bulk_inserts import insert_combos, insert_token_relations
+from db.delete import truncate_changeable_tables
+from db.post_bulk_inserts import insert_token_relations
 from models.card_info import CardInfo
-from models.post_inserts import combo_relations, token_relations
+from models.post_inserts import token_relations
 from utils.card_cache import artist_cache, illustration_cache
-from utils.combo_updates import update_combos
+from utils.combo_updates import insert_combos
 from utils.custom_types import JSONType
 
 
@@ -113,9 +112,6 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
     for related_token in card_info.related_tokens:
         token_relations.append(related_token)
 
-    for combo in card_info.combos:
-        combo_relations.append(combo)
-
 
 async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
     card_infos = CardInfo.parse_card(card)
@@ -130,7 +126,6 @@ async def insert_card(card: dict, pbar: tqdm, pool: Pool) -> None:
 
 
 async def insert_data(data: tuple[dict[str, JSONType], ...], pool: Pool) -> None:
-    await delete_index_and_mv(pool)
     await truncate_changeable_tables(pool)
 
     with tqdm(total=len(data)) as pbar:
@@ -139,19 +134,4 @@ async def insert_data(data: tuple[dict[str, JSONType], ...], pool: Pool) -> None
         await asyncio.gather(*(insert_card(card, pbar, pool) for card in data))
 
     await insert_token_relations(pool)
-    await insert_combos(pool)
-    await update_combos(data, pool)
-
-    await create_mv_distinct(pool)
-
-    all_sets = await pool.fetchval("select array_agg(normalised_name) from set;") or []
-    with tqdm(total=len(all_sets)) as pbar:
-        pbar.set_description("Creating set MVs")
-        pbar.refresh()
-        await asyncio.gather(*(create_mv_for_set(set_, pool, pbar) for set_ in all_sets))
-
-    all_artists = await pool.fetchval("select array_agg(normalised_name) from artist;")
-    with tqdm(total=len(all_artists)) as pbar:
-        pbar.set_description("Creating artist MVs")
-        pbar.refresh()
-        await asyncio.gather(*(create_mv_for_artist(artist, pool, pbar) for artist in all_artists))
+    await insert_combos(data, pool)

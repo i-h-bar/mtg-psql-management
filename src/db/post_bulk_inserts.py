@@ -35,10 +35,3 @@ async def insert_combo(combo: Combo, pbar: tqdm, pool: Pool) -> None:
         await pool.execute(queries.tables.combo.INSERT, combo.id, combo.card_id, combo.combo_card_id)
 
     pbar.update()
-
-
-async def insert_combos(pool: Pool) -> None:
-    with tqdm(total=len(combo_relations)) as pbar:
-        pbar.set_description("Inserting combos")
-        pbar.refresh()
-        await asyncio.gather(*(insert_combo(combo, pbar, pool) for combo in combo_relations))
