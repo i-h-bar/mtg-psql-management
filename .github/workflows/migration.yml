@@ -13,9 +13,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Update uv
-        run: uv self update
-
       - name: Run Migration
         run: uv run alembic upgrade head
         env:

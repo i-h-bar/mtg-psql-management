@@ -15,9 +15,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Update uv
-        run: uv self update
-
       - name: Run main script
         run: uv run src/main.py
         env:
