@@ -4,11 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  cron:
+  migrate:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Update uv
         run: uv self update
