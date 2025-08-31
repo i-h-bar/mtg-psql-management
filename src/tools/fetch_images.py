@@ -9,7 +9,7 @@ from utils.images import download_missing_images
 load_dotenv()
 
 
-async def main():
+async def main() -> None:
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
         await download_missing_images(pool)
 
