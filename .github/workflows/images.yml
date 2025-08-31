@@ -1,4 +1,4 @@
-name: images.yml
+name: download-images
 on:
   workflow_dispatch:
 
