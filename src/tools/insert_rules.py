@@ -8,7 +8,6 @@ import asyncpg
 from dotenv import load_dotenv
 
 from db.queries.tables import mtg_glossary, mtg_rules, mtg_section, mtg_subsection
-from models.rules import section
 from models.rules.definition import Definition
 from models.rules.rule import Rule
 from models.rules.section import Section
