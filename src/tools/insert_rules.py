@@ -7,9 +7,12 @@ import aiohttp
 import asyncpg
 from dotenv import load_dotenv
 
-from db.queries.tables import mtg_glossary, mtg_rules
+from db.queries.tables import mtg_glossary, mtg_rules, mtg_section, mtg_subsection
+from models.rules import section
 from models.rules.definition import Definition
 from models.rules.rule import Rule
+from models.rules.section import Section
+from models.rules.subsection import SubSection
 
 load_dotenv()
 
@@ -34,8 +37,18 @@ async def _request_rules() -> str:
         return await response.text()
 
 
-def parse_rules(rules_content: str) -> tuple[list[Rule], list[Definition]]:
+def parse_rules(rules_content: str) -> tuple[list[Rule], list[Definition], list[Section], list[SubSection]]:
     sections = dict(SECTIONS_RE.findall(rules_content.split("Glossary")[0]))
+
+    sections_to_insert = [
+        Section(id=int(section_id), title=value) for section_id, value in sections.items() if int(section_id) < 100
+    ]
+    subsections = [
+        SubSection(id=int(section_id), section_id=int(section_id[0]), title=value)
+        for section_id, value in sections.items()
+        if int(section_id) >= 100
+    ]
+
     rules = rules_content.split("Glossary")[1]
     glossary = rules_content.split("Glossary")[-1].split("Credits")[0]
     cleaned_rules = []
@@ -47,18 +60,12 @@ def parse_rules(rules_content: str) -> tuple[list[Rule], list[Definition]]:
             content.replace("\n", " ")
             number = number.rstrip(".")
             parent = LOWER_RE.sub("", number)
-            section = number[0]
-            section_title = sections[section]
             subsection = number.split(".")[0]
-            subsection_title = sections[subsection]
             cleaned_rules.append(
                 Rule(
                     number=number,
                     parent=parent,
-                    section=int(section),
-                    section_title=section_title,
-                    subsection=int(subsection),
-                    subsection_title=subsection_title,
+                    subsection_id=int(subsection),
                     content=content,
                 )
             )
@@ -79,24 +86,44 @@ def parse_rules(rules_content: str) -> tuple[list[Rule], list[Definition]]:
                 )
             )
 
-    return cleaned_rules, cleaned_glossary
+    return cleaned_rules, cleaned_glossary, sections_to_insert, subsections
 
 
 async def insert_rules() -> None:
     rules = await get_rules()
-    rules, glossary = parse_rules(rules)
+    rules, glossary, sections, subsections = parse_rules(rules)
 
     async with asyncpg.create_pool(dsn=os.getenv("PSQL_URI")) as pool:
         await asyncio.gather(
             *(
                 pool.execute(
-                    mtg_rules.INSERT,
+                    mtg_section.UPSERT,
+                    s.id,
+                    s.title,
+                )
+                for s in sections
+            )
+        )
+
+        await asyncio.gather(
+            *(
+                pool.execute(
+                    mtg_subsection.UPSERT,
+                    s.id,
+                    s.section_id,
+                    s.title,
+                )
+                for s in subsections
+            )
+        )
+
+        await asyncio.gather(
+            *(
+                pool.execute(
+                    mtg_rules.UPSERT,
                     rule.number,
                     rule.parent,
-                    rule.section,
-                    rule.section_title,
-                    rule.subsection,
-                    rule.subsection_title,
+                    rule.subsection_id,
                     rule.content,
                 )
                 for rule in rules
@@ -104,7 +131,7 @@ async def insert_rules() -> None:
         )
         await asyncio.gather(
             *(
-                pool.execute(mtg_glossary.INSERT, definition.term, definition.definition, definition.rules_reference)
+                pool.execute(mtg_glossary.UPSERT, definition.term, definition.definition, definition.rules_reference)
                 for definition in glossary
             )
         )

@@ -14,7 +14,7 @@ from models.related_tokens import RelatedToken
 async def insert_relation(related_token: RelatedToken, pbar: tqdm, pool: Pool) -> None:
     with contextlib.suppress(ForeignKeyViolationError):
         await pool.execute(
-            queries.tables.related_token.INSERT,
+            queries.tables.related_token.UPSERT,
             related_token.id,
             related_token.card_id,
             related_token.token_id,
@@ -32,6 +32,6 @@ async def insert_token_relations(pool: Pool) -> None:
 
 async def insert_combo(combo: Combo, pbar: tqdm, pool: Pool) -> None:
     with contextlib.suppress(ForeignKeyViolationError):
-        await pool.execute(queries.tables.combo.INSERT, combo.id, combo.card_id, combo.combo_card_id)
+        await pool.execute(queries.tables.combo.UPSERT, combo.id, combo.card_id, combo.combo_card_id)
 
     pbar.update()

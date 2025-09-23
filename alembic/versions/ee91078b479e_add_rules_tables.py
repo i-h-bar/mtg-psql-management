@@ -34,20 +34,18 @@ def upgrade() -> None:
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("title", sa.TEXT(), nullable=False),
         sa.ForeignKeyConstraint(["section_id"], ["mtg_rule_section.id"], ondelete="CASCADE"),
-        sa.PrimaryKeyConstraint("section_id", "id"),
+        sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_table(
         "mtg_rule",
         sa.Column("rule_number", sa.VARCHAR(length=10), nullable=False),
         sa.Column("parent_rule", sa.VARCHAR(length=10), nullable=True),
-        sa.Column("section_id", sa.INTEGER(), nullable=True),
         sa.Column("subsection_id", sa.INTEGER(), nullable=True),
         sa.Column("content", sa.TEXT(), nullable=True),
-        sa.ForeignKeyConstraint(["section_id"], ["mtg_rule_section.id"], ondelete="SET NULL"),
         sa.ForeignKeyConstraint(
-            ["section_id", "subsection_id"],
-            ["mtg_rule_subsection.section_id", "mtg_rule_subsection.id"],
+            ["subsection_id"],
+            ["mtg_rule_subsection.id"],
             ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("rule_number"),
@@ -67,7 +65,7 @@ def upgrade() -> None:
         postgresql_using="gin",
     )
 
-    op.create_index("idx_section", "mtg_rule", ["section_id", "subsection_id"])
+    op.create_index("idx_subsection", "mtg_rule", ["subsection_id"])
     op.create_index(
         "idx_content_search", "mtg_rule", [sa.text("to_tsvector('english', content)")], postgresql_using="gin"
     )
