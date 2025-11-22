@@ -1,4 +1,4 @@
-INSERT = """
+UPSERT = """
          INSERT INTO card
          (id,
           oracle_id,

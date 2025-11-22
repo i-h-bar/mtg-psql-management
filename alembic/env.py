@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 target_metadata = None
 
 parts = os.getenv("PSQL_URI").split(":")
-parts[0] = f"{parts[0]}ql+asyncpg"
+parts[0] = f"{parts[0]}+asyncpg"
 database_url = ":".join(parts)
 config.set_main_option("sqlalchemy.url", database_url)
 
