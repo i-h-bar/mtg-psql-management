@@ -1,6 +1,6 @@
 import asyncio
+from typing import TYPE_CHECKING
 
-from asyncpg import Pool
 from tqdm import tqdm
 
 from db import queries
@@ -10,7 +10,11 @@ from models.card_info import CardInfo
 from models.post_inserts import token_relations
 from utils.card_cache import artist_cache, illustration_cache
 from utils.combo_updates import insert_combos
-from utils.custom_types import JSONType
+
+if TYPE_CHECKING:
+    from asyncpg import Pool
+
+    from utils.custom_types import JSONType
 
 
 async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
@@ -25,7 +29,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
         illustration_cache.add(illustration.id)
 
     image = card_info.image
-    await pool.execute(queries.tables.image.INSERT, image.id, image.scryfall_url)
+    await pool.execute(queries.tables.image.UPSERT, image.id, image.scryfall_url)
 
     legality = card_info.legality
     await pool.execute(

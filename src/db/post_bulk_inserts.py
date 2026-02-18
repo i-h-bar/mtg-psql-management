@@ -1,14 +1,18 @@
 import asyncio
 import contextlib
+from typing import TYPE_CHECKING
 
-from asyncpg import Pool
 from asyncpg.exceptions import ForeignKeyViolationError
 from tqdm import tqdm
 
 from db import queries
-from models.combos import Combo
 from models.post_inserts import token_relations
-from models.related_tokens import RelatedToken
+
+if TYPE_CHECKING:
+    from asyncpg import Pool
+
+    from models.combos import Combo
+    from models.related_tokens import RelatedToken
 
 
 async def insert_relation(related_token: RelatedToken, pbar: tqdm, pool: Pool) -> None:

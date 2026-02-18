@@ -1,9 +1,11 @@
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
-from utils.custom_types import JSONType
 from utils.normalise import normalise
+
+if TYPE_CHECKING:
+    from utils.custom_types import JSONType
 
 MISSING_ID_ID = ["aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"]
 MISSING_ARTIST = "Anonymous"

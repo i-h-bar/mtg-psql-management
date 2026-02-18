@@ -1,8 +1,10 @@
 import asyncio
-
-from asyncpg import Pool
+from typing import TYPE_CHECKING
 
 from db.queries.tables import combo, related_token
+
+if TYPE_CHECKING:
+    from asyncpg import Pool
 
 
 async def truncate_combos(pool: Pool) -> None:

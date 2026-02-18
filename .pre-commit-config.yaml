@@ -10,13 +10,11 @@ repos:
     -   id: check-added-large-files
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.2
+  rev: v0.15.1
   hooks:
-    - id: ruff
+    - id: ruff-check
       name: Ruff Python Linting
-      args:
-        - --fix
-      stages: ["pre-push"]
+      args: [--fix]
       always_run: true
     - id: ruff-format
       name: Ruff Python Formatting

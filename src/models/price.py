@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
-from utils.custom_types import JSONType
 from utils.data import date_cache
+
+if TYPE_CHECKING:
+
+    from utils.custom_types import JSONType
 
 
 class Price(BaseModel):

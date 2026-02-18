@@ -1,9 +1,11 @@
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
 from utils.art_ids import parse_art_id
-from utils.custom_types import JSONType
+
+if TYPE_CHECKING:
+    from utils.custom_types import JSONType
 
 
 class Image(BaseModel):

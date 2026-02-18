@@ -1,14 +1,16 @@
 from datetime import datetime
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
-from models.artists import Artist
-from models.illustrations import Illustration
-from models.images import Image
-from models.sets import Set
-from utils.custom_types import JSONType
 from utils.normalise import normalise
+
+if TYPE_CHECKING:
+    from models.artists import Artist
+    from models.illustrations import Illustration
+    from models.images import Image
+    from models.sets import Set
+    from utils.custom_types import JSONType
 
 
 class Card(BaseModel):

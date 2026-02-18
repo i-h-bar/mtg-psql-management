@@ -3,12 +3,12 @@ name = "rustcord-scripts"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "aiofiles>=24.1.0",
     "aiohttp>=3.12.15",
-    "asyncpg>=0.30.0",
-    "pydantic>=2.11.7",
+    "asyncpg>=0.31.0",
+    "pydantic>=2.12.5",
     "python-dotenv>=1.1.1",
     "tqdm>=4.67.1",
     "unidecode>=1.4.0",
@@ -20,8 +20,6 @@ package = true
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.9",
-    "ty>=0.0.1a19",
     "coverage (>=7.10.4,<8.0.0)",
     "pytest (>=8.4.1,<9.0.0)",
     "pre-commit (>=4.3,<5.0)",
@@ -35,7 +33,7 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 120
-target-version = "py313"
+target-version = "py314"
 include = ["src/**/*.py"]
 exclude = [
     ".bzr",
@@ -95,6 +93,11 @@ select = [
     "PERF",
     "W",
     "RUF"
+]
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
 ]
 
 

@@ -1,14 +1,16 @@
 import contextlib
 import logging
 import os
-import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import aiofiles
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
-from asyncpg import Pool, Record
 from dotenv import load_dotenv
 from tqdm import tqdm
+
+if TYPE_CHECKING:
+    from asyncpg import Pool, Record
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +28,11 @@ async def fetch_image(record: Record, session: ClientSession, pbar: tqdm, direct
             return
 
         if result.status != 200:
-            logger.warning(f"{result.status}: {result.content}")
-            sys.exit(1)
+            logger.warning(
+                f"Could not find image for {record["id"]} - {record["scryfall_url"]}{result.status}: {result.content}"
+            )
+            pbar.update()
+            return
 
         try:
             png = await result.read()

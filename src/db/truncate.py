@@ -1,6 +1,8 @@
 import logging
+from typing import TYPE_CHECKING
 
-from asyncpg import Pool
+if TYPE_CHECKING:
+    from asyncpg import Pool
 
 logger = logging.getLogger(__name__)
 

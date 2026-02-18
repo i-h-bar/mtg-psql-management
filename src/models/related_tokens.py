@@ -1,8 +1,10 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
-from utils.custom_types import JSONType
+if TYPE_CHECKING:
+    from utils.custom_types import JSONType
 
 
 class RelatedToken(BaseModel):

@@ -1,8 +1,9 @@
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import BaseModel
 
-from utils.custom_types import JSONType
+if TYPE_CHECKING:
+    from utils.custom_types import JSONType
 
 
 class Legality(BaseModel):
