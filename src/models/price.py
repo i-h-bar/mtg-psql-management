@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from utils.data import date_cache
 
 if TYPE_CHECKING:
-
     from utils.custom_types import JSONType
 
 

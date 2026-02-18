@@ -83,7 +83,7 @@ async def _insert_card(card_info: CardInfo, pool: Pool) -> None:
 
     card = card_info.card
     await pool.execute(
-        queries.tables.card.INSERT,
+        queries.tables.card.UPSERT,
         card.id,
         card.oracle_id,
         card.name,

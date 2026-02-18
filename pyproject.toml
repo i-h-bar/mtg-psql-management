@@ -13,6 +13,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "unidecode>=1.4.0",
     "alembic (>=1.16.4,<2.0.0)",
+    "anyio (>=4.12.1,<5)",
 ]
 
 [tool.uv]
