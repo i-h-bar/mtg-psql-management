@@ -1,13 +1,16 @@
 import asyncio
 import os
 from logging.config import fileConfig
+from typing import TYPE_CHECKING
 
-from asyncpg import Connection
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
+
+if TYPE_CHECKING:
+    from asyncpg import Connection
 
 load_dotenv()
 
@@ -18,7 +21,7 @@ if config.config_file_name is not None:
 target_metadata = None
 
 parts = os.getenv("PSQL_URI").split(":")
-parts[0] = f"{parts[0]}ql+asyncpg"
+parts[0] = "postgresql+asyncpg"
 database_url = ":".join(parts)
 config.set_main_option("sqlalchemy.url", database_url)
 
