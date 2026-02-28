@@ -123,10 +123,37 @@ class CardInfo(BaseModel):
         return front, back
 
     @classmethod
+    def produce_sides_matching_names(
+        cls: type[Self], card: dict[str, JSONType], front: dict[str, JSONType], back: dict[str, JSONType]
+    ) -> tuple[Self, Self] | None:
+        back_id = increment_uuid(card["id"])
+        oracle_id = front.get("oracle_id") or card.get("oracle_id")
+
+        set_ = Set(
+            id=card["set_id"],
+            name=card["set_name"],
+            normalised_name=normalise(card["set_name"]),
+            abbreviation=card["set"],
+        )
+
+        front = CardInfo.produce_side(card["id"], oracle_id, back_id, front, card, set_)
+        if not front:
+            return None
+
+        back = CardInfo.produce_side(back_id, oracle_id, front.card.id, back, card, set_)
+        if not back:
+            return None
+
+        return front, back
+
+    @classmethod
     def parse_card(cls: type[Self], card: dict[str, str | int | list]) -> tuple[Self] | tuple[Self, Self] | None:
         if not (sides := card.get("card_faces")):
             if card := CardInfo.from_card(card):
                 return (card,)
             return None
+
+        if sides[0].get("name") == sides[1].get("name"):
+            return CardInfo.produce_sides_matching_names(card, sides[0], sides[1])
 
         return CardInfo.produce_sides(card, sides[0], sides[1])
